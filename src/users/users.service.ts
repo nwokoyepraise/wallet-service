@@ -7,6 +7,6 @@ export class UsersService {
   constructor(@InjectKnex() private readonly knex: Knex) {}
 
   async addUser(addUserDto: AddUserDto) {
-    return await this.knex.table('users').insert({ addUserDto });
+    return await this.knex.table('users').insert(addUserDto );
   }
 }
