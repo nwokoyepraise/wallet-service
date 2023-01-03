@@ -1,7 +1,5 @@
 import * as dotenv from "dotenv";
-import {resolve} from "path";
 dotenv.config();
-console.log(process.env)
 module.exports = {
   development: {
     client: 'mysql2',
