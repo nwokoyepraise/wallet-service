@@ -22,6 +22,7 @@ export async function up(knex: Knex): Promise<void> {
 
   await knex.schema.createTableIfNotExists('wallets', (table) => {
     table.string('wallet_id').primary();
+    table.string('user_id').notNullable().references('users.user_id');
     table.integer('balance').unsigned().defaultTo(0);
     table.string('currency').defaultTo(Iso4217.NGN);
     table.timestamps(true, true, false);
