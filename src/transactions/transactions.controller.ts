@@ -62,6 +62,7 @@ export class TransactionsController {
     account_number: string,
     bank_code: string,
     amount: number,
+    wallet_id: string
   ) {
     const headers = {
       'Content-Type': 'application/json',
@@ -83,7 +84,7 @@ export class TransactionsController {
     );
 
     if (data?.status == 'success') {
-      return await this.transactionsService.completeWithdrawal(transaction_id);
+      return await this.transactionsService.completeWithdrawal(transaction_id, wallet_id);
     }
   }
 
@@ -257,7 +258,7 @@ export class TransactionsController {
       amount
     );
 
-    this.completeWithdrawal(tx.transaction_id, 'withrawal', account_number, bank_code, amount)
+    this.completeWithdrawal(tx.transaction_id, 'withrawal', account_number, bank_code, amount, wallet.wallet_id)
     return tx
   }
 }

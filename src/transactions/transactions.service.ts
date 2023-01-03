@@ -136,7 +136,7 @@ export class TransactionsService {
     return tx;
   }
 
-  async completeWithdrawal(transaction_id: string) {
+  async completeWithdrawal(transaction_id: string, wallet_id: string) {
     await this.knex.transaction(async function (tx) {
       let transaction: Transaction = (
         await tx
@@ -149,7 +149,7 @@ export class TransactionsService {
         .table('wallets')
         .increment('balance', -transaction.amount)
         .where({
-          wallet_id: transaction.source,
+          wallet_id
         });
 
       await tx
