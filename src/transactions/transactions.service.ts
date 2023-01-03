@@ -142,7 +142,7 @@ export class TransactionsService {
         await tx
           .select('*')
           .from('transactions')
-          .where(transaction_id)
+          .where({transaction_id})
       )[0];
       console.log(transaction);
       await tx
