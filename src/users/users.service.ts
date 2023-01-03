@@ -23,6 +23,7 @@ export class UsersService {
         token: tokenHash
       });
     });
+    addUserDto.password = undefined;
     return addUserDto;
   }
 
