@@ -14,10 +14,12 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import {
   TransactionNotFoundException,
   UnableToCreatePaymentLinkException,
+  WalletNotFoundException,
 } from 'src/common/exceptions';
 import { KeyGen } from 'src/common/utils/key-gen';
 import { User } from 'src/users/users.decorator';
 import { UserPayload } from 'src/users/users.dto';
+import { WalletsService } from 'src/wallets/wallets.service';
 import { FundWalletDto, TransferDto } from './transactions.dto';
 import { TransactionStatus, TransactionType } from './transactions.enum';
 import { TransactionsService } from './transactions.service';
@@ -27,6 +29,7 @@ export class TransactionsController {
   constructor(
     private readonly transactionsService: TransactionsService,
     private readonly httpService: HttpService,
+    private readonly walletsService: WalletsService,
   ) {}
 
   @UseGuards(JwtAuthGuard)
@@ -36,6 +39,14 @@ export class TransactionsController {
     @User() { user_id, email }: UserPayload,
   ) {
     let ref = KeyGen.gen(20, 'alphanumeric');
+
+    let walletExists = await this.walletsService.walletExists(
+      fundWalletDto.wallet_id,
+    );
+    
+    if (!walletExists) {
+      throw WalletNotFoundException();
+    }
 
     let tx = await this.transactionsService.initiateWalletFunding(
       user_id,
