@@ -22,8 +22,8 @@ services:
       retries: 10
     networks:
       - app-tier  
-    volumes:
-      - db:/var/lib/mysql
+    # volumes:
+    #   - db:/var/lib/mysql
   app:
     depends_on:
       mysqldb:

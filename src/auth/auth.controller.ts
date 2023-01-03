@@ -15,7 +15,6 @@ import {
 import { TokenHandler } from 'src/common/utils/token-handler';
 import { UsersService } from 'src/users/users.service';
 import { verifyEmailDto } from './auth.dto';
-import { EmailVerifUsage } from './auth.enum';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 
@@ -35,7 +34,7 @@ export class AuthController {
   @Patch('verify-email')
   async verifyEmail(@Body() verifyDto: verifyEmailDto) {
     //check if user already has a verified email
-    let user = await this.usersService.findUser('userId', verifyDto.userId);
+    let user = await this.usersService.findUser('userId', verifyDto.user_id);
 
     //check if email already exists
     user = await this.usersService.findUser('email', verifyDto.email);
@@ -46,10 +45,7 @@ export class AuthController {
     }
 
     //get token details from db
-    const token = await this.authService.getEmailToken({
-      usage: EmailVerifUsage.VERIFICATION,
-      ...verifyDto,
-    });
+    const token = await this.authService.getEmailToken(verifyDto);
 
     //throw if not found
     if (!token?.tokenHash) {

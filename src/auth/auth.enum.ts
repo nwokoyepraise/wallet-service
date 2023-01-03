@@ -1,4 +1,1 @@
-export enum EmailVerifUsage {
-  VERIFICATION = 'VERIFICATION',
-  TRANSACTION = 'TRANSACTION',
-}
+

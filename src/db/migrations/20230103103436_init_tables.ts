@@ -1,10 +1,8 @@
-import { IsISO31661Alpha2 } from 'class-validator';
 import { Knex } from 'knex';
-import { EmailVerifUsage } from 'src/auth/auth.enum';
-import { Iso4217 } from 'src/common/enums';
+import { Iso4217 } from '../../common/enums';
 
 export async function up(knex: Knex): Promise<void> {
-  await knex.schema.createTableIfNotExists('users', (table) => {
+  await knex.schema.createTable('users', (table) => {
     table.string('user_id').primary();
     table.string('email').notNullable();
     table.smallint('email_verified').defaultTo(0);
@@ -12,15 +10,14 @@ export async function up(knex: Knex): Promise<void> {
     table.timestamps(true, true, false);
   });
 
-  await knex.schema.createTableIfNotExists('email_verifs', (table) => {
+  await knex.schema.createTable('email_verifs', (table) => {
     table.string('user_id').primary().references('users.user_id');
     table.string('email').notNullable();
-    table.string('token').defaultTo(false);
-    table.enum('usage', Object.values(EmailVerifUsage)).defaultTo(false);
+    table.string('token').notNullable()
     table.timestamps(true, true, false);
   });
 
-  await knex.schema.createTableIfNotExists('wallets', (table) => {
+  await knex.schema.createTable('wallets', (table) => {
     table.string('wallet_id').primary();
     table.string('user_id').notNullable().references('users.user_id');
     table.integer('balance').unsigned().defaultTo(0);
@@ -28,7 +25,7 @@ export async function up(knex: Knex): Promise<void> {
     table.timestamps(true, true, false);
   });
 
-  await knex.schema.createTableIfNotExists('accounts', (table) => {
+  await knex.schema.createTable('accounts', (table) => {
     table.string('account_id').primary();
     table.string('user_id').notNullable().references('users.user_id');
     table.string('bank_code').notNullable();
@@ -37,7 +34,7 @@ export async function up(knex: Knex): Promise<void> {
     table.timestamps(true, true, false);
   });
 
-  await knex.schema.createTableIfNotExists('transactions', (table) => {
+  await knex.schema.createTable('transactions', (table) => {
     table.string('transaction_id').primary();
     table.string('source').references('users.user_id');
     table.string('beneficiary').references('users.user_id');
@@ -49,9 +46,9 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  await knex.schema.dropTableIfExists('users');
-  await knex.schema.dropTableIfExists('email_verifs');
-  await knex.schema.dropTableIfExists('wallets');
-  await knex.schema.dropTableIfExists('accounts');
-  await knex.schema.dropTableIfExists('transactions');
+  await knex.schema.dropTable('users');
+  await knex.schema.dropTable('email_verifs');
+  await knex.schema.dropTable('wallets');
+  await knex.schema.dropTable('accounts');
+  await knex.schema.dropTable('transactions');
 }

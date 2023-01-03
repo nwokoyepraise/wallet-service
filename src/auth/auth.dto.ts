@@ -1,5 +1,4 @@
 import { IsEmail, MaxLength, IsNotEmpty, IsString } from 'class-validator';
-import { EmailVerifUsage } from './auth.enum';
 
 export class verifyEmailDto {
   @IsEmail()
@@ -8,7 +7,7 @@ export class verifyEmailDto {
 
   @IsNotEmpty()
   @IsString()
-  readonly userId: string;
+  readonly user_id: string;
 
   @IsNotEmpty()
   @IsString()
@@ -17,7 +16,6 @@ export class verifyEmailDto {
 }
 
 export type GetEmailTokenParams = Readonly<{
-    email: string;
-    userId: string;
-    usage: EmailVerifUsage;
-  }>;
+  email: string;
+  user_id: string;
+}>;

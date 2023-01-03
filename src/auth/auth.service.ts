@@ -3,21 +3,19 @@ import { InjectKnex, Knex } from 'nestjs-knex';
 import { KeyGen } from 'src/common/utils/key-gen';
 import { text } from 'stream/consumers';
 import { GetEmailTokenParams } from './auth.dto';
-import { EmailVerifUsage } from './auth.enum';
 
 @Injectable()
 export class AuthService {
   constructor(@InjectKnex() private readonly knex: Knex) {}
   async getEmailToken({
-    userId,
+    user_id,
     email,
-    usage,
   }: GetEmailTokenParams): Promise<any> {
     return (
       await this.knex
         .select('*')
         .from('email_verifs')
-        .where({ userId: userId, email: email, usage: usage })
+        .where({ user_id, email })
     )[0];
   }
 
@@ -36,7 +34,6 @@ export class AuthService {
         .where({
           email,
           user_id,
-          usage: EmailVerifUsage.VERIFICATION,
         })
         .delete();
 
