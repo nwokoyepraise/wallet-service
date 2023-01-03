@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
-import { EmailVerifUsage } from 'src/auth/auth.enum';
-import { KeyGen } from 'src/common/utils/key-gen';
 import { AddUserDto, User } from './users.interface';
 
 @Injectable()
@@ -17,7 +15,6 @@ export class UsersService {
         .insert({
           email: addUserDto.email,
           user_id: addUserDto.user_id,
-          usage: EmailVerifUsage.VERIFICATION,
         });
     });
     return addUserDto;
