@@ -38,6 +38,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       email_verified: user.email_verified,
     };
 
-    return { userId: user.userId, jwt: this.jwtService.sign(payload) };
+    return { user_id: user.user_id, jwt: this.jwtService.sign(payload) };
   }
 }
