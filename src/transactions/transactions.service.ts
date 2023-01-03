@@ -25,4 +25,22 @@ export class TransactionsService {
     await this.knex.table('transactions').insert(tx);
     return tx;
   }
+
+  async completeWalletFunding(
+    user_id: string,
+    ref: string,
+    { amount, currency }: FundWalletDto,
+  ) {
+    let tx = {
+      transaction_id: `tr${ref}`,
+      ref,
+      source: user_id,
+      amount,
+      currency,
+      status: TransactionStatus.PENDING,
+      type: TransactionType.FUNDING,
+    };
+    await this.knex.table('transactions').insert(tx);
+    return tx;
+  }
 }
