@@ -62,7 +62,7 @@ export class TransactionsController {
     account_number: string,
     bank_code: string,
     amount: number,
-    wallet_id: string
+    wallet_id: string,
   ) {
     const headers = {
       'Content-Type': 'application/json',
@@ -84,7 +84,10 @@ export class TransactionsController {
     );
 
     if (data?.status == 'success') {
-      return await this.transactionsService.completeWithdrawal(transaction_id, wallet_id);
+      return await this.transactionsService.completeWithdrawal(
+        transaction_id,
+        wallet_id,
+      );
     }
   }
 
@@ -255,10 +258,26 @@ export class TransactionsController {
       user_id,
       wallet.currency,
       ref,
-      amount
+      amount,
     );
 
-    this.completeWithdrawal(tx.transaction_id, 'withrawal', account_number, bank_code, amount, wallet.wallet_id)
-    return tx
+    this.completeWithdrawal(
+      tx.transaction_id,
+      'withrawal',
+      account_number,
+      bank_code,
+      amount,
+      wallet.wallet_id,
+    );
+    return tx;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':transactionId')
+  async findTransaction(@Param('transactionId') transactionId: string) {
+    return await this.transactionsService.findTransaction(
+      'transactionId',
+      transactionId,
+    );
   }
 }
