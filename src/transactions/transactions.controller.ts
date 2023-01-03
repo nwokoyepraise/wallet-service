@@ -118,7 +118,7 @@ export class TransactionsController {
       if (data.status !== 'success' && data.status !== 'successful') {
         throw 'error';
       }
-
+      console.log(data);
       let successful = await this.transactionsService.completeWalletFunding(
         data.meta.wallet_id,
         transaction,

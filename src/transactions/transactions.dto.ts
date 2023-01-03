@@ -12,7 +12,7 @@ export class FundWalletDto {
     currency?: Iso4217 =  Iso4217.NGN
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsString()
     wallet_id: string;
 }
 
