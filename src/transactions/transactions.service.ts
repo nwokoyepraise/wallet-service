@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
 import { KeyGen } from 'src/common/utils/key-gen';
-import { FundWalletDto, Transaction } from './transactions.dto';
+import { FundWalletDto, Transaction, TransferDto } from './transactions.dto';
 import { TransactionStatus, TransactionType } from './transactions.enum';
 
 @Injectable()
@@ -48,5 +48,24 @@ export class TransactionsService {
         .from('transactions')
         .where({ [field]: key })
     )[0];
+  }
+
+  async transferFunds(
+    user_id: string,
+    ref: string,
+    { amount, beneficiary, wallet_id }: TransferDto,
+  ) {
+    let tx = {
+      transaction_id: `tr${ref}`,
+      ref,
+      source: user_id,
+      beneficiary,
+      amount,
+      currency,
+      status: TransactionStatus.PENDING,
+      type: TransactionType.FUNDING,
+    };
+    await this.knex.table('transactions').insert(tx);
+    return tx;
   }
 }

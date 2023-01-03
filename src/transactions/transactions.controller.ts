@@ -17,7 +17,7 @@ import {
 import { KeyGen } from 'src/common/utils/key-gen';
 import { User } from 'src/users/users.decorator';
 import { UserPayload } from 'src/users/users.dto';
-import { FundWalletDto } from './transactions.dto';
+import { FundWalletDto, TransferDto } from './transactions.dto';
 import { TransactionStatus, TransactionType } from './transactions.enum';
 import { TransactionsService } from './transactions.service';
 
@@ -125,5 +125,58 @@ export class TransactionsController {
       }
       return;
     }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('transfer')
+  async transferFunds(
+    @Body() transferDto: TransferDto,
+    @User() { user_id, email }: UserPayload,
+  ) {
+    let ref = KeyGen.gen(20, 'alphanumeric');
+
+    let tx = await this.transactionsService.initiateWalletFunding(
+      user_id,
+      ref,
+      transferDto,
+    );
+
+    if (!tx?.transaction_id) {
+      throw UnableToCreatePaymentLinkException();
+    }
+
+    let payload = {
+      amount: transferDto.amount,
+      tx_ref: ref,
+      meta: {
+        user_id,
+        type: TransactionType.FUNDING,
+        transaction_id: tx.transaction_id,
+      },
+      redirect_url: `https://nwokoyepraise-lendsqr-be-test.onrender.com/transactions/${tx.transaction_id}/fund-wallet/payment-callback/`,
+      customer: { email },
+    };
+
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.FW_SECRET_KEY}`,
+    };
+
+    const response = await lastValueFrom(
+      this.httpService.post(
+        `https://api.flutterwave.com/v3/payments`,
+        payload,
+        {
+          headers: headers,
+        },
+      ),
+    );
+    const { data } = response;
+
+    if (data?.status !== 'success') {
+      throw UnableToCreatePaymentLinkException();
+    }
+
+    return { link: data?.data.link, ...tx };
   }
 }
