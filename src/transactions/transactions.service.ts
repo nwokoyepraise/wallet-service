@@ -130,7 +130,7 @@ export class TransactionsService {
       amount,
       currency,
       status: TransactionStatus.PENDING,
-      type: TransactionType.FUNDING,
+      type: TransactionType.WITHDRAWAL
     };
     await this.knex.table('transactions').insert(tx);
     return tx;
