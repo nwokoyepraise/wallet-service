@@ -43,26 +43,5 @@ services:
     tty: true
     networks:
       - app-tier  
-    # healthcheck:
-    #   test: bash -c 'node docker-health-check.ts'
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
-
-  # migration:
-  #   build: .
-  #   depends_on: 
-  #     - app
-  #       # condition: service_started
-  #   command: bash -c "while !</dev/tcp/mysqldb/3306; do sleep 1; done; npm run db:migrate:run"
-  #   environment:
-  #     - APP_HOST=app
-  #     - DB_HOST=mysqldb
-  #     - DB_USER=$MYSQLDB_USER
-  #     - DB_PASSWORD=$MYSQLDB_ROOT_PASSWORD
-  #     - DB_NAME=$MYSQLDB_DATABASE
-  #     - DB_PORT=$MYSQLDB_DOCKER_PORT
-  #   networks:
-  #     - app-tier  
 volumes: 
   db:
