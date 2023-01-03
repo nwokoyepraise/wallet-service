@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  InternalServerErrorException,
   Param,
   Post,
   Query,
@@ -137,10 +138,18 @@ export class TransactionsController {
   ) {
     let ref = KeyGen.gen(20, 'alphanumeric');
 
-    let tx = await this.transactionsService.transferFunds(
+    let successful = await this.transactionsService.transferFunds(
       user_id,
       ref,
       transferDto,
+    );
+
+    if (successful) {
+      return { message: 'success' };
+    }
+
+    throw new InternalServerErrorException(
+      'unable to transfer funds, please try again',
     );
   }
 }
