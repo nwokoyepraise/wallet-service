@@ -1,5 +1,9 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { EmailAlreadyUsedException, VerifiedEmailAlreadyExistsException } from 'src/common/exceptions';
+import {
+  EmailAlreadyUsedException,
+  VerifiedEmailAlreadyExistsException,
+} from 'src/common/exceptions';
+import { KeyGen } from 'src/common/utils/key-gen';
 import { TokenHandler } from 'src/common/utils/token-handler';
 import { AddUserDto } from './users.interface';
 import { UsersService } from './users.service';
@@ -20,7 +24,8 @@ export class UsersController {
     if (data?.email && !data.emailVerified) {
       throw EmailAlreadyUsedException();
     }
-    addUserDto.password = await TokenHandler.hashKey(addUserDto.password)
+    addUserDto.password = await TokenHandler.hashKey(addUserDto.password);
+    addUserDto.user_id =   `US${KeyGen.gen(13)}`;
     return await this.usersService.addUser(addUserDto);
   }
 }

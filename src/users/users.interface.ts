@@ -17,4 +17,6 @@ export class AddUserDto {
   @IsNotEmpty()
   @MinLength(8)
   password: string;
+
+  user_id: string;
 }

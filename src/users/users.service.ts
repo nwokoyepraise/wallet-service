@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
+import { EmailVerifUsage } from 'src/auth/auth.enum';
 import { KeyGen } from 'src/common/utils/key-gen';
 import { AddUserDto, User } from './users.interface';
 
@@ -8,9 +9,18 @@ export class UsersService {
   constructor(@InjectKnex() private readonly knex: Knex) {}
 
   async addUser(addUserDto: AddUserDto) {
-    return await this.knex
-      .table('users')
-      .insert({ user_id: `US${KeyGen.gen(15)}`, ...addUserDto });
+    await this.knex.transaction(async function (tx) {
+      await tx.table('users').insert(addUserDto);
+
+      await tx
+        .table('email_verifs')
+        .insert({
+          email: addUserDto.email,
+          user_id: addUserDto.user_id,
+          usage: EmailVerifUsage.VERIFICATION,
+        });
+    });
+    return addUserDto;
   }
 
   async findUser(field: string, key: string): Promise<any> {
