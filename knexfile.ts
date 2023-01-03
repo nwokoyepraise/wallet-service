@@ -8,8 +8,8 @@ module.exports = {
     connection: {
       host: process.env.DB_HOST,
       user: process.env.MYSQLDB_USER,
-      password: 'diu8YHdkoio92Jdi',
-      database: 'wsdb',
+      password: process.env.MYSQLDB_ROOT_PASSWORD,
+      database: process.env.MYSQLDB_DATABASE,
       port: Number(process.env.MYSQLDB_DOCKER_PORT),
     },
     migrations: {
