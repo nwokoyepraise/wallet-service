@@ -44,7 +44,7 @@ export class TransactionsController {
         type: TransactionType.FUNDING,
         transaction_id: tx.transaction_id,
       },
-      redirect_url: `https://nwokoyepraise-lendsqr-be-test.onrender.com/transactions/fund-wallet/`,
+      redirect_url: `https://nwokoyepraise-lendsqr-be-test.onrender.com/transactions/payment-callback/`,
       customer: { email },
     };
 
