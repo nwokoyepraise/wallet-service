@@ -273,11 +273,11 @@ export class TransactionsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post(':transactionId')
-  async findTransaction(@Param('transactionId') transactionId: string) {
+  @Post(':transaction_id')
+  async findTransaction(@Param('transactionId') transaction_id: string) {
     return await this.transactionsService.findTransaction(
-      'transactionId',
-      transactionId,
+      'transaction_id',
+      transaction_id,
     );
   }
 }
