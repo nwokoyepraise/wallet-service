@@ -1,5 +1,6 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 import { Iso4217 } from "src/common/enums";
+import { TransactionStatus, TransactionType } from "./transactions.enum";
 
 export class FundWalletDto {
     @IsNotEmpty()
@@ -10,3 +11,14 @@ export class FundWalletDto {
     @IsEnum(Iso4217, {message: 'currency must be a valid Iso 4217 value'})
     currency?: Iso4217 =  Iso4217.NGN
 }
+
+export type Transaction = Readonly<{
+    transaction_id: string;
+    amount: number;
+    source: string;
+    beneficiary: string;
+    status: TransactionStatus;
+    type: TransactionType;
+    currency: Iso4217;
+    ref: string;
+}>

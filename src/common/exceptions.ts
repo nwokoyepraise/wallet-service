@@ -24,5 +24,8 @@ export const LoginCredentialsException = () =>
 export const UserNotFoundOrEmailNotVerifiedException = () =>
   new NotFoundException('user not found or email not verified');
 
-  export const UnableToCreatePaymentLinkException = () =>
-  new InternalServerErrorException("unable to create payment link");
+export const UnableToCreatePaymentLinkException = () =>
+  new InternalServerErrorException('unable to create payment link');
+
+export const TransactionNotFoundException = () =>
+  new NotFoundException('transaction not found');
