@@ -3,6 +3,9 @@ import {
   Controller,
   InternalServerErrorException,
   Patch,
+  Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import {
   EmailTokenNotFoundException,
@@ -14,6 +17,7 @@ import { UsersService } from 'src/users/users.service';
 import { verifyEmailDto } from './auth.dto';
 import { EmailVerifUsage } from './auth.enum';
 import { AuthService } from './auth.service';
+import { LocalAuthGuard } from './local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -22,6 +26,12 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) {}
 
+  @UseGuards(LocalAuthGuard)
+  @Post('login')
+  login(@Req() req) {
+    return req.user;
+  }
+  
   @Patch('verify-email')
   async verifyEmail(@Body() verifyDto: verifyEmailDto) {
     //check if user already has a verified email
