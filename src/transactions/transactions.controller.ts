@@ -222,7 +222,7 @@ export class TransactionsController {
   @UseGuards(JwtAuthGuard)
   @Post('withdraw')
   async intiatiateWithdrawal(
-    { account_number, amount, bank_code, source_wallet }: WithdrawalDto,
+    @Body() { account_number, amount, bank_code, source_wallet }: WithdrawalDto,
     @User() { user_id }: UserPayload,
   ) {
     let account = await this.resolveAccount(bank_code, account_number);
