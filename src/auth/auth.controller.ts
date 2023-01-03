@@ -48,13 +48,13 @@ export class AuthController {
     const token = await this.authService.getEmailToken(verifyDto);
 
     //throw if not found
-    if (!token?.tokenHash) {
+    if (!token?.token) {
       throw EmailTokenNotFoundException();
     }
 
     //compare plain token to token hash
     const valid = await TokenHandler.verifyKey(
-      token.tokenHash,
+      token.token,
       verifyDto.token,
     );
 

@@ -2,7 +2,7 @@ import { customAlphabet } from 'nanoid';
 
 export class KeyGen {
   /* istanbul ignore next */
-  static gen(length: number, type?: string): string {
+  static gen(length: number, type?: 'numeric'): string {
     let dict: string;
     switch (type) {
       case 'numeric':
