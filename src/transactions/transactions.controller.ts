@@ -57,10 +57,10 @@ export class TransactionsController {
   }
 
   async completeWithdrawal(
-    transactionId: string,
+    transaction_id: string,
     narration: string,
-    accountNumber: string,
-    bankCode: string,
+    account_number: string,
+    bank_code: string,
     amount: number,
   ) {
     const headers = {
@@ -72,8 +72,8 @@ export class TransactionsController {
         `https://api.flutterwave.com/v3/transfers`,
         {
           account_name: '',
-          account_number: accountNumber,
-          account_bank: bankCode,
+          account_number: account_number,
+          account_bank: bank_code,
           amount,
           narration,
           currency: 'NGN',
@@ -83,7 +83,7 @@ export class TransactionsController {
     );
 
     if (data?.status == 'success') {
-      return await this.transactionsService.completeWithdrawal(transactionId);
+      return await this.transactionsService.completeWithdrawal(transaction_id);
     }
   }
 

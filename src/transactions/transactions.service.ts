@@ -140,12 +140,11 @@ export class TransactionsService {
     await this.knex.transaction(async function (tx) {
       let transaction: Transaction = (
         await tx
-          .table('transactions')
           .select('*')
           .from('transactions')
           .where(transaction_id)
       )[0];
-
+      console.log(transaction);
       await tx
         .table('wallets')
         .increment('balance', -transaction.amount)
