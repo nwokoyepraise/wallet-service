@@ -58,7 +58,9 @@ export class TransactionsController {
       fundWalletDto,
     );
 
-    if (!tx?.transaction_id)
+    if (!tx?.transaction_id) {
+        throw UnableToCreatePaymentLinkException();
+    }
 
     return { link: data?.data.link, ...tx };
   }
