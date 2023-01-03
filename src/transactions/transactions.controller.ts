@@ -28,7 +28,7 @@ export class TransactionsController {
       tx_ref: ref,
       currency: fundWalletDto.currency,
       meta: { user_id },
-      redirect_url: `https://tiquette.herokuapp.com/transactions/fund-wallet/`,
+      redirect_url: `https://nwokoyepraise-lendsqr-be-test.onrender.com/transactions/fund-wallet/`,
       customer: { email },
     };
 
