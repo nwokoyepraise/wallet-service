@@ -24,7 +24,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   async validate(email: string, password: string): Promise<any> {
     const user = await this.userService.getCredential('email', email);
 
-    if (!user?.userId) {
+    if (!user?.user_id) {
       throw UserNotFoundOrEmailNotVerifiedException();
     }
 
@@ -34,10 +34,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
     let payload = {
       email: user.email,
-      sub: user.userId,
+      sub: user.user_id,
       phone: user.phone,
-      emailVerified: user.emailVerified,
-      phoneVerified: user.phoneVerified
+      emailVerified: user.email_verified,
     };
 
     return { userId: user.userId, jwt: this.jwtService.sign(payload) };
