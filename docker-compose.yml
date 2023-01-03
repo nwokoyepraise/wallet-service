@@ -1,4 +1,8 @@
-version: '3.8'
+version: '3.9'
+
+networks:
+  app-tier:
+    driver: bridge
 
 services:
   mysqldb:
@@ -11,11 +15,19 @@ services:
       - MYSQL_ROOT_HOST=%
     ports:
        - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
+    healthcheck:
+      test: mysqladmin -u root --password=$MYSQLDB_ROOT_PASSWORD ping
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    networks:
+      - app-tier  
     # volumes:
     #     - db:/var/lib/mysql
   app:
     depends_on:
-      - mysqldb
+      mysqldb:
+        condition: service_healthy
     build: ./
     restart: unless-stopped
     env_file: ./.env
@@ -29,6 +41,28 @@ services:
       - DB_PORT=$MYSQLDB_DOCKER_PORT
     stdin_open: true
     tty: true
+    networks:
+      - app-tier  
+    # healthcheck:
+    #   test: bash -c 'node docker-health-check.ts'
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
 
+  # migration:
+  #   build: .
+  #   depends_on: 
+  #     - app
+  #       # condition: service_started
+  #   command: bash -c "while !</dev/tcp/mysqldb/3306; do sleep 1; done; npm run db:migrate:run"
+  #   environment:
+  #     - APP_HOST=app
+  #     - DB_HOST=mysqldb
+  #     - DB_USER=$MYSQLDB_USER
+  #     - DB_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+  #     - DB_NAME=$MYSQLDB_DATABASE
+  #     - DB_PORT=$MYSQLDB_DOCKER_PORT
+  #   networks:
+  #     - app-tier  
 volumes: 
   db:
