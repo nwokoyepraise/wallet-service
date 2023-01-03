@@ -58,7 +58,7 @@ export class TransactionsController {
       fundWalletDto,
     );
 
-    if (!tx?.trasaction_id)
+    if (!tx?.transaction_id)
 
     return { link: data?.data.link, ...tx };
   }

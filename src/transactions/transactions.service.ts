@@ -14,7 +14,7 @@ export class TransactionsService {
     { amount, currency }: FundWalletDto,
   ) {
     let tx = {
-      trasaction_id: `tr${ref}`,
+      transaction_id: `tr${ref}`,
       ref,
       source: user_id,
       amount,
