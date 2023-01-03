@@ -26,7 +26,7 @@ export class AuthService {
     await this.knex.transaction(async function (tx) {
       await tx
         .table('users')
-        .update({ email_verified: true })
+        .update({ email_verified: 1 })
         .where({ user_id });
 
       await tx
@@ -39,7 +39,7 @@ export class AuthService {
 
       await tx
         .table('wallets')
-        .insert({ user_id, wallet_id: `US${KeyGen.gen(13)}` });
+        .insert({ user_id, wallet_id: `WA${KeyGen.gen(13)}` });
     });
 
     return true;
