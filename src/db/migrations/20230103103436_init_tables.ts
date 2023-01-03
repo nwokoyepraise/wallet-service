@@ -1,4 +1,5 @@
 import { Knex } from 'knex';
+import { TransactionStatus, TransactionType } from 'src/transactions/transactions.enum';
 import { Iso4217 } from '../../common/enums';
 
 export async function up(knex: Knex): Promise<void> {
@@ -37,10 +38,12 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('transactions', (table) => {
     table.string('transaction_id').primary();
     table.string('source').references('users.user_id');
-    table.string('beneficiary').references('users.user_id');
+    table.string('ref').notNullable();
+    table.string('beneficiary').references('users.user_id').defaultTo(null);
     table.integer('amount').notNullable();
     table.enum('currency', Object.values(Iso4217)).defaultTo(Iso4217.NGN);
-    table.enum('type', Object.values(Iso4217)).defaultTo(Iso4217.NGN);
+    table.enum('type', Object.values(TransactionType)).notNullable();
+    table.enum('status', Object.values(TransactionStatus)).defaultTo(TransactionStatus.PENDING);
     table.timestamps(true, true, false);
   });
 }

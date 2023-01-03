@@ -18,15 +18,18 @@ export class TransactionsController {
   ) {}
 
   @Post('fund-wallet')
-  async fundWallet(@Body()fundWalletDto: FundWalletDto, @User() {user_id, email}: UserPayload) {
+  async fundWallet(
+    @Body() fundWalletDto: FundWalletDto,
+    @User() { user_id, email }: UserPayload,
+  ) {
     let ref = KeyGen.gen(20, 'alphanumeric');
     let payload = {
       amount: fundWalletDto.amount,
       tx_ref: ref,
       currency: fundWalletDto.currency,
-      meta: {user_id},
+      meta: { user_id },
       redirect_url: `https://tiquette.herokuapp.com/transactions/fund-wallet/`,
-      customer: { email},
+      customer: { email },
     };
 
     const headers = {
@@ -49,6 +52,14 @@ export class TransactionsController {
       throw UnableToCreatePaymentLinkException();
     }
 
-    return { link: data?.data.link };
+    let tx = await this.transactionsService.initiateWalletFunding(
+      user_id,
+      ref,
+      fundWalletDto,
+    );
+
+    if (!tx?.trasaction_id)
+
+    return { link: data?.data.link, ...tx };
   }
 }
