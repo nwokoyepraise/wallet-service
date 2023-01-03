@@ -34,7 +34,7 @@ export class AuthController {
   @Patch('verify-email')
   async verifyEmail(@Body() verifyDto: verifyEmailDto) {
     //check if user already has a verified email
-    let user = await this.usersService.findUser('userId', verifyDto.user_id);
+    let user = await this.usersService.findUser('user_id', verifyDto.user_id);
 
     //check if email already exists
     user = await this.usersService.findUser('email', verifyDto.email);
