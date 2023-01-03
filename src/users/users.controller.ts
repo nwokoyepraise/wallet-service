@@ -5,7 +5,7 @@ import {
 } from 'src/common/exceptions';
 import { KeyGen } from 'src/common/utils/key-gen';
 import { TokenHandler } from 'src/common/utils/token-handler';
-import { AddUserDto } from './users.interface';
+import { AddUserDto } from './users.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')

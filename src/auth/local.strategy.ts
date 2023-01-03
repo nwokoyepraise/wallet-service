@@ -35,8 +35,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     let payload = {
       email: user.email,
       sub: user.user_id,
-      phone: user.phone,
-      emailVerified: user.email_verified,
+      email_verified: user.email_verified,
     };
 
     return { userId: user.userId, jwt: this.jwtService.sign(payload) };

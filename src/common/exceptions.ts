@@ -1,6 +1,7 @@
 import {
   ConflictException,
   ForbiddenException,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -22,3 +23,6 @@ export const LoginCredentialsException = () =>
 
 export const UserNotFoundOrEmailNotVerifiedException = () =>
   new NotFoundException('user not found or email not verified');
+
+  export const UnableToCreatePaymentLinkException = () =>
+  new InternalServerErrorException("unable to create payment link");

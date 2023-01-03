@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
 import { KeyGen } from 'src/common/utils/key-gen';
 import { TokenHandler } from 'src/common/utils/token-handler';
-import { AddUserDto, User } from './users.interface';
+import { AddUserDto, User } from './users.dto';
 
 @Injectable()
 export class UsersService {
