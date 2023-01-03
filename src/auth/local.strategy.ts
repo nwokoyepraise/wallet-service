@@ -13,7 +13,6 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private readonly authService: AuthService,
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
   ) {
