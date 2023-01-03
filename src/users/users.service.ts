@@ -31,4 +31,14 @@ export class UsersService {
         .where({ [field]: key })
     )[0];
   }
+
+
+  async getCredential(field: string, key: string): Promise<any> {
+    return (
+      await this.knex
+        .select('*')
+        .from('users')
+        .where({ [field]: key, email_verified: 1 })
+    )[0];
+  }
 }

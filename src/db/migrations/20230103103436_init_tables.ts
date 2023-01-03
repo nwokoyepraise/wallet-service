@@ -7,7 +7,7 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTableIfNotExists('users', (table) => {
     table.string('user_id').primary();
     table.string('email').notNullable();
-    table.boolean('email_verified').defaultTo(false);
+    table.smallint('email_verified').defaultTo(0);
     table.string('password').notNullable();
     table.timestamps(true, true, false);
   });
