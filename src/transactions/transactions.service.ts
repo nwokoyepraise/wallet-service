@@ -144,7 +144,7 @@ export class TransactionsService {
           .from('transactions')
           .where({transaction_id})
       )[0];
-      console.log(transaction);
+  
       await tx
         .table('wallets')
         .increment('balance', -transaction.amount)
