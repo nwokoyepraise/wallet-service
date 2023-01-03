@@ -1,5 +1,5 @@
 import { Knex } from 'knex';
-import { TransactionStatus, TransactionType } from 'src/transactions/transactions.enum';
+import { TransactionStatus, TransactionType } from '../../transactions/transactions.enum';
 import { Iso4217 } from '../../common/enums';
 
 export async function up(knex: Knex): Promise<void> {
