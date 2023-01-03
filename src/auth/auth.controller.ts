@@ -63,7 +63,7 @@ export class AuthController {
       throw InvalidEmailTokenException();
     }
     const data = await this.authService.verifyEmailToken(
-      user.userId,
+      user.user_id,
       user.email,
     );
 

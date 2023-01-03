@@ -1,4 +1,4 @@
-import { IsEmail, MaxLength, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, MaxLength, IsNotEmpty, IsString, IsNumberString } from 'class-validator';
 
 export class verifyEmailDto {
   @IsEmail()
@@ -10,7 +10,7 @@ export class verifyEmailDto {
   readonly user_id: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsNumberString()
   @MaxLength(6)
   readonly token: string;
 }
