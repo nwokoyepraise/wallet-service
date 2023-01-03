@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
+import { Wallet } from './wallets.dto';
 
 @Injectable()
 export class WalletsService {
@@ -10,5 +11,14 @@ export class WalletsService {
       await this.knex.select('wallet_id').from('wallets').where({ wallet_id })
     )[0];
     return wallet?.wallet_id ? true : false;
+  }
+
+  async findWallet(field: string, key: string): Promise<Wallet> {
+    return (
+      await this.knex
+        .select('*')
+        .from('wallets')
+        .where({ [field]: key })
+    )[0];
   }
 }

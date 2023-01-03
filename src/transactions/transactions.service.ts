@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
+import { Iso4217 } from 'src/common/enums';
 import {
   NotWalletOwnerException,
   WalletNotFoundException,
 } from 'src/common/exceptions';
 import { KeyGen } from 'src/common/utils/key-gen';
 import { Wallet } from 'src/wallets/wallets.dto';
-import { FundWalletDto, Transaction, TransferDto } from './transactions.dto';
+import {
+  FundWalletDto,
+  Transaction,
+  TransferDto,
+  WithdrawalDto,
+} from './transactions.dto';
 import { TransactionStatus, TransactionType } from './transactions.enum';
 
 @Injectable()
@@ -31,10 +37,13 @@ export class TransactionsService {
     return tx;
   }
 
-  async completeWalletFunding(wallet_id: string, { transaction_id, source, amount }: Transaction) {
+  async completeWalletFunding(
+    wallet_id: string,
+    { transaction_id, source, amount }: Transaction,
+  ) {
     await this.knex.transaction(async function (tx) {
       await tx.table('wallets').increment('balance', amount).where({
-        wallet_id
+        wallet_id,
       });
 
       await tx
@@ -103,6 +112,51 @@ export class TransactionsService {
         type: TransactionType.TRANSFER,
       };
       await tx.table('transactions').insert(data);
+    });
+
+    return true;
+  }
+
+  async initiateWithdrawal(
+    user_id: string,
+    currency: Iso4217,
+    ref: string,
+    amount: number,
+  ) {
+    let tx = {
+      transaction_id: `tr${ref}`,
+      ref,
+      source: user_id,
+      amount,
+      currency,
+      status: TransactionStatus.PENDING,
+      type: TransactionType.FUNDING,
+    };
+    await this.knex.table('transactions').insert(tx);
+    return tx;
+  }
+
+  async completeWithdrawal(transaction_id: string) {
+    await this.knex.transaction(async function (tx) {
+      let transaction: Transaction = (
+        await tx
+          .table('transactions')
+          .select('*')
+          .from('transactions')
+          .where(transaction_id)
+      )[0];
+
+      await tx
+        .table('wallets')
+        .increment('balance', -transaction.amount)
+        .where({
+          wallet_id: transaction.source,
+        });
+
+      await tx
+        .table('transactions')
+        .update({ status: TransactionStatus.COMPLETED })
+        .where({ transaction_id });
     });
 
     return true;

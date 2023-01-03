@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   InternalServerErrorException,
@@ -35,3 +36,10 @@ export const WalletNotFoundException = () =>
 
 export const NotWalletOwnerException = () =>
   new ForbiddenException('user is not the ownerof wallet');
+
+export const InvalidAccountException = () =>
+  new ForbiddenException('account is not valid');
+
+
+export const InsufficientBalanceException = () =>
+new BadRequestException('insufficient balance');

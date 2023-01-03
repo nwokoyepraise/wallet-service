@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -12,6 +13,9 @@ import {
 import { lastValueFrom } from 'rxjs';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import {
+  InsufficientBalanceException,
+  InvalidAccountException,
+  NotWalletOwnerException,
   TransactionNotFoundException,
   UnableToCreatePaymentLinkException,
   WalletNotFoundException,
@@ -20,7 +24,7 @@ import { KeyGen } from 'src/common/utils/key-gen';
 import { User } from 'src/users/users.decorator';
 import { UserPayload } from 'src/users/users.dto';
 import { WalletsService } from 'src/wallets/wallets.service';
-import { FundWalletDto, TransferDto } from './transactions.dto';
+import { FundWalletDto, TransferDto, WithdrawalDto } from './transactions.dto';
 import { TransactionStatus, TransactionType } from './transactions.enum';
 import { TransactionsService } from './transactions.service';
 
@@ -31,6 +35,57 @@ export class TransactionsController {
     private readonly httpService: HttpService,
     private readonly walletsService: WalletsService,
   ) {}
+
+  async resolveAccount(bankCode: string, accountNumber: string) {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.FW_SECRET_KEY}`,
+    };
+    try {
+      const { data } = await lastValueFrom(
+        this.httpService.post(
+          `https://api.flutterwave.com/v3/accounts/resolve`,
+          { account_number: accountNumber, account_bank: bankCode },
+          { headers },
+        ),
+      );
+      return data;
+    } catch (error: any) {
+      console.error(error?.response?.data);
+      throw new BadRequestException();
+    }
+  }
+
+  async completeWithdrawal(
+    transactionId: string,
+    narration: string,
+    accountNumber: string,
+    bankCode: string,
+    amount: number,
+  ) {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.FW_SECRET_KEY}`,
+    };
+    const { data } = await lastValueFrom(
+      this.httpService.post(
+        `https://api.flutterwave.com/v3/transfers`,
+        {
+          account_name: '',
+          account_number: accountNumber,
+          account_bank: bankCode,
+          amount,
+          narration,
+          currency: 'NGN',
+        },
+        { headers: headers },
+      ),
+    );
+
+    if (data?.status == 'success') {
+      return await this.transactionsService.completeWithdrawal(transactionId);
+    }
+  }
 
   @UseGuards(JwtAuthGuard)
   @Post('fund-wallet')
@@ -43,7 +98,7 @@ export class TransactionsController {
     let walletExists = await this.walletsService.walletExists(
       fundWalletDto.wallet_id,
     );
-    
+
     if (!walletExists) {
       throw WalletNotFoundException();
     }
@@ -129,7 +184,7 @@ export class TransactionsController {
       if (data.status !== 'success' && data.status !== 'successful') {
         throw 'error';
       }
-      console.log(data);
+
       let successful = await this.transactionsService.completeWalletFunding(
         data.meta.wallet_id,
         transaction,
@@ -162,5 +217,47 @@ export class TransactionsController {
     throw new InternalServerErrorException(
       'unable to transfer funds, please try again',
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('withdraw')
+  async intiatiateWithdrawal(
+    { account_number, amount, bank_code, source_wallet }: WithdrawalDto,
+    @User() { user_id }: UserPayload,
+  ) {
+    let account = await this.resolveAccount(bank_code, account_number);
+
+    if (account?.status != 'success') {
+      throw InvalidAccountException();
+    }
+
+    let wallet = await this.walletsService.findWallet(
+      'wallet_id',
+      source_wallet,
+    );
+
+    if (!wallet?.wallet_id) {
+      throw WalletNotFoundException();
+    }
+
+    if (wallet.user_id != user_id) {
+      throw !NotWalletOwnerException();
+    }
+
+    if (wallet.balance < amount) {
+      throw InsufficientBalanceException();
+    }
+
+    let ref = KeyGen.gen(20, 'alphanumeric');
+
+    let tx = await this.transactionsService.initiateWithdrawal(
+      user_id,
+      wallet.currency,
+      ref,
+      amount
+    );
+
+    this.completeWithdrawal(tx.transaction_id, 'withrawal', account_number, bank_code, amount)
+    return tx
   }
 }
