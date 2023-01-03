@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
+import {
+  NotWalletOwnerException,
+  WalletNotFoundException,
+} from 'src/common/exceptions';
 import { KeyGen } from 'src/common/utils/key-gen';
+import { Wallet } from 'src/wallets/wallets.dto';
 import { FundWalletDto, Transaction, TransferDto } from './transactions.dto';
 import { TransactionStatus, TransactionType } from './transactions.enum';
 
@@ -26,10 +31,10 @@ export class TransactionsService {
     return tx;
   }
 
-  async completeWalletFunding({ transaction_id, source, amount }: Transaction) {
+  async completeWalletFunding(wallet_id: string, { transaction_id, source, amount }: Transaction) {
     await this.knex.transaction(async function (tx) {
       await tx.table('wallets').increment('balance', amount).where({
-        user_id: source,
+        wallet_id
       });
 
       await tx
@@ -53,19 +58,53 @@ export class TransactionsService {
   async transferFunds(
     user_id: string,
     ref: string,
-    { amount, beneficiary, wallet_id }: TransferDto,
+    { amount, beneficiary_wallet, source_wallet }: TransferDto,
   ) {
-    let tx = {
-      transaction_id: `tr${ref}`,
-      ref,
-      source: user_id,
-      beneficiary,
-      amount,
-      currency,
-      status: TransactionStatus.PENDING,
-      type: TransactionType.FUNDING,
-    };
-    await this.knex.table('transactions').insert(tx);
-    return tx;
+    await this.knex.transaction(async function (tx) {
+      let sourceWallet: Wallet = (
+        await tx.select('*').from('wallets').where({ wallet_id: source_wallet })
+      )[0];
+
+      if (!sourceWallet?.wallet_id) {
+        throw WalletNotFoundException();
+      }
+
+      if (sourceWallet.user_id !== user_id) {
+        throw NotWalletOwnerException();
+      }
+
+      let beneficiaryWallet: Wallet = (
+        await tx
+          .select('*')
+          .from('wallets')
+          .where({ wallet_id: beneficiary_wallet })
+      )[0];
+
+      if (!beneficiaryWallet?.wallet_id) {
+        throw WalletNotFoundException();
+      }
+
+      await tx.table('wallets').increment('balance', -amount).where({
+        wallet_id: source_wallet,
+      });
+
+      await tx.table('wallets').increment('balance', +amount).where({
+        wallet_id: beneficiary_wallet,
+      });
+
+      let data = {
+        transaction_id: `tr${ref}`,
+        ref,
+        source: user_id,
+        beneficiary: beneficiaryWallet.user_id,
+        amount,
+        currency: sourceWallet.currency,
+        status: TransactionStatus.COMPLETED,
+        type: TransactionType.TRANSFER,
+      };
+      await tx.table('transactions').insert(data);
+    });
+
+    return true;
   }
 }

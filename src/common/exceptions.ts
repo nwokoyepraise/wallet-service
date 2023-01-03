@@ -29,3 +29,9 @@ export const UnableToCreatePaymentLinkException = () =>
 
 export const TransactionNotFoundException = () =>
   new NotFoundException('transaction not found');
+
+export const WalletNotFoundException = () =>
+  new NotFoundException('wallet not found');
+
+export const NotWalletOwnerException = () =>
+  new ForbiddenException('user is not the ownerof wallet');

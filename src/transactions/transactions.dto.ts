@@ -10,6 +10,10 @@ export class FundWalletDto {
     @IsOptional()
     @IsEnum(Iso4217, {message: 'currency must be a valid Iso 4217 value'})
     currency?: Iso4217 =  Iso4217.NGN
+
+    @IsNotEmpty()
+    @IsNumber()
+    wallet_id: string;
 }
 
 export class TransferDto {
@@ -19,11 +23,11 @@ export class TransferDto {
 
     @IsNotEmpty()
     @IsString()
-    wallet_id: string;
+    source_wallet: string;
 
     @IsNotEmpty()
     @IsString()
-    beneficiary: string;
+    beneficiary_wallet: string;
 }
 
 export type Transaction = Readonly<{

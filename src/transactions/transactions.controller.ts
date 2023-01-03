@@ -54,6 +54,7 @@ export class TransactionsController {
         user_id,
         type: TransactionType.FUNDING,
         transaction_id: tx.transaction_id,
+        wallet_id: fundWalletDto.wallet_id,
       },
       redirect_url: `https://nwokoyepraise-lendsqr-be-test.onrender.com/transactions/${tx.transaction_id}/fund-wallet/payment-callback/`,
       customer: { email },
@@ -118,6 +119,7 @@ export class TransactionsController {
       }
 
       let successful = await this.transactionsService.completeWalletFunding(
+        data.meta.wallet_id,
         transaction,
       );
       if (successful) {
@@ -135,48 +137,10 @@ export class TransactionsController {
   ) {
     let ref = KeyGen.gen(20, 'alphanumeric');
 
-    let tx = await this.transactionsService.initiateWalletFunding(
+    let tx = await this.transactionsService.transferFunds(
       user_id,
       ref,
       transferDto,
     );
-
-    if (!tx?.transaction_id) {
-      throw UnableToCreatePaymentLinkException();
-    }
-
-    let payload = {
-      amount: transferDto.amount,
-      tx_ref: ref,
-      meta: {
-        user_id,
-        type: TransactionType.FUNDING,
-        transaction_id: tx.transaction_id,
-      },
-      redirect_url: `https://nwokoyepraise-lendsqr-be-test.onrender.com/transactions/${tx.transaction_id}/fund-wallet/payment-callback/`,
-      customer: { email },
-    };
-
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.FW_SECRET_KEY}`,
-    };
-
-    const response = await lastValueFrom(
-      this.httpService.post(
-        `https://api.flutterwave.com/v3/payments`,
-        payload,
-        {
-          headers: headers,
-        },
-      ),
-    );
-    const { data } = response;
-
-    if (data?.status !== 'success') {
-      throw UnableToCreatePaymentLinkException();
-    }
-
-    return { link: data?.data.link, ...tx };
   }
 }
