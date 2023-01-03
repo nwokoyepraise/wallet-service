@@ -27,7 +27,6 @@ export class TransactionsService {
   }
 
   async completeWalletFunding({ transaction_id, source, amount }: Transaction) {
-    await this.knex('transactions').update({ transaction_id });
     await this.knex.transaction(async function (tx) {
       await tx.table('wallets').increment('balance', amount).where({
         user_id: source,
