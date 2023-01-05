@@ -2,9 +2,9 @@ import { Body, Controller, Post } from '@nestjs/common';
 import {
   EmailAlreadyUsedException,
   VerifiedEmailAlreadyExistsException,
-} from 'src/common/exceptions';
-import { KeyGen } from 'src/common/utils/key-gen';
-import { TokenHandler } from 'src/common/utils/token-handler';
+} from '../common/exceptions';
+import { KeyGen } from '../common/utils/key-gen';
+import { TokenHandler } from '../common/utils/token-handler';
 import { AddUserDto } from './users.dto';
 import { UsersService } from './users.service';
 

@@ -6,7 +6,7 @@ import {
   IsString,
   Min,
 } from 'class-validator';
-import { BankCode, Iso4217 } from 'src/common/enums';
+import { BankCode, Iso4217 } from '../common/enums';
 import { TransactionStatus, TransactionType } from './transactions.enum';
 
 export class FundWalletDto {

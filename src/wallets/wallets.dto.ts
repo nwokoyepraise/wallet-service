@@ -1,5 +1,5 @@
 import { IsISO4217CurrencyCode, IsNotEmpty, IsString } from "class-validator";
-import { Iso4217 } from "src/common/enums";
+import { Iso4217 } from "../common/enums";
 
 export type Wallet = Readonly<{
     wallet_id: string;
