@@ -41,6 +41,7 @@ export class TransferDto {
 export class WithdrawalDto {
   @IsNotEmpty()
   @IsNumber()
+  @Min(1)
   amount: number;
 
   @IsNotEmpty()
