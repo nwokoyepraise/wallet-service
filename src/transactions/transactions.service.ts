@@ -66,16 +66,14 @@ export class TransactionsService {
     )[0];
   }
 
-  async findTransactions(user_id: string): Promise<Transaction> {
-    return (
-      await this.knex
-        .select('*')
-        .from('transactions')
-        .where({ source: user_id })
-        .union(function () {
-          this.select('*').from('transactions').where({ beneficiary: user_id });
-        })
-    )[0];
+  async findTransactions(user_id: string): Promise<Transaction[]> {
+    return await this.knex
+      .select('*')
+      .from('transactions')
+      .where({ source: user_id })
+      .union(function () {
+        this.select('*').from('transactions').where({ beneficiary: user_id });
+      });
   }
 
   async transferFunds(
