@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Min,
 } from 'class-validator';
 import { BankCode, Iso4217 } from 'src/common/enums';
 import { TransactionStatus, TransactionType } from './transactions.enum';
@@ -25,6 +26,7 @@ export class FundWalletDto {
 export class TransferDto {
   @IsNotEmpty()
   @IsNumber()
+  @Min(1)
   amount: number;
 
   @IsNotEmpty()
