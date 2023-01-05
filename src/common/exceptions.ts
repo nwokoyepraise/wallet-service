@@ -45,3 +45,6 @@ new BadRequestException('insufficient balance');
 
 export const CurrencyMismatchException = () =>
 new BadRequestException('currency mismatch between source and beneficiary wallets');
+
+export const IllegalResourceAccessException = () =>
+  new ForbiddenException('forbidden from viewing resource');

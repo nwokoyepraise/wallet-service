@@ -13,6 +13,7 @@ import {
 import { lastValueFrom } from 'rxjs';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import {
+  IllegalResourceAccessException,
   InsufficientBalanceException,
   InvalidAccountException,
   NotWalletOwnerException,
@@ -274,11 +275,19 @@ export class TransactionsController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':transaction_id')
-  async findTransaction(@Param('transaction_id') transaction_id: string) {
-    return await this.transactionsService.findTransaction(
+  async findTransaction(
+    @Param('transaction_id') transaction_id: string,
+    @User() { user_id }: UserPayload,
+  ) {
+    let transaction = await this.transactionsService.findTransaction(
       'transaction_id',
       transaction_id,
     );
+
+    if (transaction.source != user_id && transaction.beneficiary != user_id) {
+      throw IllegalResourceAccessException();
+    }
+    return transaction;
   }
 
   @UseGuards(JwtAuthGuard)
