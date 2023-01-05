@@ -73,7 +73,7 @@ export class TransactionsService {
         .from('transactions')
         .where({ source: user_id })
         .union(function () {
-          this.select('*').where({ beneficiary: user_id });
+          this.select('*').from('transactions').where({ beneficiary: user_id });
         })
     )[0];
   }
