@@ -5,40 +5,42 @@ networks:
     driver: bridge
 
 services:
-  mysqldb:
-    image: mysql/mysql-server:latest
-    restart: unless-stopped
-    env_file: ./.env
-    environment:
-      - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
-      - MYSQL_DATABASE=$MYSQLDB_DATABASE
-      - MYSQL_ROOT_HOST=%
-    ports:
-       - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
-    healthcheck:
-      test: mysqladmin -u root --password=$MYSQLDB_ROOT_PASSWORD ping
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    networks:
-      - app-tier  
+  # mysqldb:
+  #   image: mysql/mysql-server:latest
+  #   restart: unless-stopped
+  #   env_file: ./.env
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+  #     - MYSQL_DATABASE=$MYSQLDB_DATABASE
+  #     - MYSQL_ROOT_HOST=%
+  #   ports:
+  #      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
+  #   healthcheck:
+  #     test: mysqladmin -u root --password=$MYSQLDB_ROOT_PASSWORD ping
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 10
+  #   networks:
+  #     - app-tier  
     # volumes:
     #   - db:/var/lib/mysql
   app:
-    depends_on:
-      mysqldb:
-        condition: service_healthy
+    # depends_on:
+    #   mysqldb:
+    #     condition: service_healthy
     build: ./
     restart: unless-stopped
     env_file: ./.env
     ports:
       - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
     environment:
-      - DB_HOST=mysqldb
+      # - DB_HOST=mysqldb
+      - DB_HOST=$MYSQLDB_HOST
       - DB_USER=$MYSQLDB_USER
       - DB_PASSWORD=$MYSQLDB_ROOT_PASSWORD
       - DB_NAME=$MYSQLDB_DATABASE
-      - DB_PORT=$MYSQLDB_DOCKER_PORT
+      # - DB_PORT=$MYSQLDB_DOCKER_PORT
+      - DB_PORT=$MYSQLDB_PORT
     stdin_open: true
     tty: true
     networks:

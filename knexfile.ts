@@ -8,7 +8,7 @@ module.exports = {
       user: process.env.MYSQLDB_USER,
       password: process.env.MYSQLDB_ROOT_PASSWORD,
       database: process.env.MYSQLDB_DATABASE,
-      port: Number(process.env.MYSQLDB_DOCKER_PORT),
+      port: Number(process.env.MYSQLDB_PORT),
     },
     migrations: {
       extension: 'ts',
