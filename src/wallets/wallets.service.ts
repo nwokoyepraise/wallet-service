@@ -21,4 +21,13 @@ export class WalletsService {
         .where({ [field]: key })
     )[0];
   }
+
+  async findWallets(field: string, key: string): Promise<Wallet[]> {
+    return (
+      await this.knex
+        .select('*')
+        .from('wallets')
+        .where({ [field]: key })
+    );
+  }
 }
