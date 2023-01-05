@@ -13,7 +13,7 @@ import { WalletsModule } from './wallets/wallets.module';
       config: {
         client: 'mysql2',
         connection: {
-          host: process.env.DB_HOST,
+          host: process.env.MYSQLDB_HOST,
           user: process.env.MYSQLDB_USER,
           password: process.env.MYSQLDB_ROOT_PASSWORD,
           database: process.env.MYSQLDB_DATABASE,
