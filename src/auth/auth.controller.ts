@@ -11,9 +11,9 @@ import {
   EmailTokenNotFoundException,
   InvalidEmailTokenException,
   VerifiedEmailAlreadyExistsException,
-} from 'src/common/exceptions';
-import { TokenHandler } from 'src/common/utils/token-handler';
-import { UsersService } from 'src/users/users.service';
+} from '../common/exceptions';
+import { TokenHandler } from '../common/utils/token-handler';
+import { UsersService } from '../users/users.service';
 import { verifyEmailDto } from './auth.dto';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';

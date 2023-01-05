@@ -3,7 +3,7 @@ import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 export class User {
   user_id: string;
   email: string;
-  email_verified: boolean;
+  email_verified: number;
   password: string;
   created_at: Date;
   updated_at: Date;

@@ -15,8 +15,8 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.ping()).toBe('Hello World!');
+    it('should return json status', () => {
+      expect(appController.ping()).toBe({message: 'server active!'});
     });
   });
 });

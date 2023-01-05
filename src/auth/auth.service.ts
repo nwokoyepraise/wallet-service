@@ -1,7 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
-import { KeyGen } from 'src/common/utils/key-gen';
-import { text } from 'stream/consumers';
+import { KeyGen } from '../common/utils/key-gen';
 import { GetEmailTokenParams } from './auth.dto';
 
 @Injectable()

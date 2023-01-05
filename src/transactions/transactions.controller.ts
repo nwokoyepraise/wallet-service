@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import {
   IllegalResourceAccessException,
   InsufficientBalanceException,
@@ -20,11 +20,11 @@ import {
   TransactionNotFoundException,
   UnableToCreatePaymentLinkException,
   WalletNotFoundException,
-} from 'src/common/exceptions';
-import { KeyGen } from 'src/common/utils/key-gen';
-import { User } from 'src/users/users.decorator';
-import { UserPayload } from 'src/users/users.dto';
-import { WalletsService } from 'src/wallets/wallets.service';
+} from '../common/exceptions';
+import { KeyGen } from '../common/utils/key-gen';
+import { User } from '../users/users.decorator';
+import { UserPayload } from '../users/users.dto';
+import { WalletsService } from '../wallets/wallets.service';
 import { FundWalletDto, TransferDto, WithdrawalDto } from './transactions.dto';
 import { TransactionStatus, TransactionType } from './transactions.enum';
 import { TransactionsService } from './transactions.service';

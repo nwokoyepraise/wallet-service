@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
-import { KeyGen } from 'src/common/utils/key-gen';
-import { TokenHandler } from 'src/common/utils/token-handler';
+import { KeyGen } from '../common/utils/key-gen';
+import { TokenHandler } from '../common/utils/token-handler';
 import { AddUserDto, User } from './users.dto';
 
 @Injectable()

@@ -2,12 +2,11 @@ import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 
-import { AuthService } from './auth.service';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import {
   LoginCredentialsException, UserNotFoundOrEmailNotVerifiedException,
-} from 'src/common/exceptions';
-import { TokenHandler } from 'src/common/utils/token-handler';
+} from '../common/exceptions';
+import { TokenHandler } from '../common/utils/token-handler';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()

@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import {
   NotWalletOwnerException,
   WalletNotFoundException,
-} from 'src/common/exceptions';
-import { User } from 'src/users/users.decorator';
-import { UserPayload } from 'src/users/users.dto';
+} from '../common/exceptions';
+import { User } from '../users/users.decorator';
+import { UserPayload } from '../users/users.dto';
 import { AddWalletDto } from './wallets.dto';
 import { WalletsService } from './wallets.service';
 

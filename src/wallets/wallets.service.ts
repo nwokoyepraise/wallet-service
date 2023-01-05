@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
-import { KeyGen } from 'src/common/utils/key-gen';
+import { KeyGen } from '../common/utils/key-gen';
 import { AddWalletDto, Wallet } from './wallets.dto';
 
 @Injectable()

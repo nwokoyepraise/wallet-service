@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
-import { Iso4217 } from 'src/common/enums';
+import { Iso4217 } from '../common/enums';
 import {
   CurrencyMismatchException,
   InsufficientBalanceException,
   NotWalletOwnerException,
   WalletNotFoundException,
-} from 'src/common/exceptions';
-import { KeyGen } from 'src/common/utils/key-gen';
-import { Wallet } from 'src/wallets/wallets.dto';
+} from '../common/exceptions';
+import { Wallet } from '../wallets/wallets.dto';
 import {
   FundWalletDto,
   Transaction,
   TransferDto,
-  WithdrawalDto,
 } from './transactions.dto';
 import { TransactionStatus, TransactionType } from './transactions.enum';
 
