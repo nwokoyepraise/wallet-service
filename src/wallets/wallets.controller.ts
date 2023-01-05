@@ -9,10 +9,10 @@ import { UserPayload } from 'src/users/users.dto';
 import { WalletsService } from './wallets.service';
 
 @Controller('wallets')
+@UseGuards(JwtAuthGuard)
 export class WalletsController {
   constructor(private readonly walletsService: WalletsService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get(':wallet_id')
   async findWallet(
     @Param('wallet_id') wallet_id: string,
@@ -30,11 +30,8 @@ export class WalletsController {
     return wallet;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
-  async findWallets(
-    @User() { user_id }: UserPayload,
-  ) {
+  async findWallets(@User() { user_id }: UserPayload) {
     let wallets = await this.walletsService.findWallets('user_id', user_id);
 
     return wallets;
