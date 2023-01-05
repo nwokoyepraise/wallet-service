@@ -15,7 +15,7 @@ export class WalletsController {
   @UseGuards(JwtAuthGuard)
   @Get(':wallet_id')
   async findWallet(
-    @Param('transactionId') wallet_id: string,
+    @Param('wallet_id') wallet_id: string,
     @User() { user_id }: UserPayload,
   ) {
     let wallet = await this.walletsService.findWallet('wallet_id', wallet_id);
@@ -33,18 +33,10 @@ export class WalletsController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async findWallets(
-    @Param('transactionId') wallet_id: string,
     @User() { user_id }: UserPayload,
   ) {
-    let wallet = await this.walletsService.findWallet('user_id', user_id);
+    let wallets = await this.walletsService.findWallets('user_id', user_id);
 
-    if (!wallet?.wallet_id) {
-      throw WalletNotFoundException();
-    }
-
-    if (wallet.user_id != user_id) {
-      throw NotWalletOwnerException();
-    }
-    return wallet;
+    return wallets;
   }
 }
