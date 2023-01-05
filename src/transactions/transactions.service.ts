@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
 import { Iso4217 } from 'src/common/enums';
 import {
+  InsufficientBalanceException,
   NotWalletOwnerException,
   WalletNotFoundException,
 } from 'src/common/exceptions';
@@ -93,6 +94,10 @@ export class TransactionsService {
         throw WalletNotFoundException();
       }
 
+      if (sourceWallet.balance < amount) {
+        throw InsufficientBalanceException();
+      }
+
       await tx.table('wallets').increment('balance', -amount).where({
         wallet_id: source_wallet,
       });
@@ -130,7 +135,7 @@ export class TransactionsService {
       amount,
       currency,
       status: TransactionStatus.PENDING,
-      type: TransactionType.WITHDRAWAL
+      type: TransactionType.WITHDRAWAL,
     };
     await this.knex.table('transactions').insert(tx);
     return tx;
@@ -139,17 +144,14 @@ export class TransactionsService {
   async completeWithdrawal(transaction_id: string, wallet_id: string) {
     await this.knex.transaction(async function (tx) {
       let transaction: Transaction = (
-        await tx
-          .select('*')
-          .from('transactions')
-          .where({transaction_id})
+        await tx.select('*').from('transactions').where({ transaction_id })
       )[0];
-  
+
       await tx
         .table('wallets')
         .increment('balance', -transaction.amount)
         .where({
-          wallet_id
+          wallet_id,
         });
 
       await tx
