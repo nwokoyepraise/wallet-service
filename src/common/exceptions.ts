@@ -40,6 +40,8 @@ export const NotWalletOwnerException = () =>
 export const InvalidAccountException = () =>
   new ForbiddenException('account is not valid');
 
-
 export const InsufficientBalanceException = () =>
 new BadRequestException('insufficient balance');
+
+export const CurrencyMismatchException = () =>
+new BadRequestException('currency mismatch between source and beneficiary wallets');

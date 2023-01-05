@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
 import { Iso4217 } from 'src/common/enums';
 import {
+  CurrencyMismatchException,
   InsufficientBalanceException,
   NotWalletOwnerException,
   WalletNotFoundException,
@@ -96,6 +97,10 @@ export class TransactionsService {
 
       if (sourceWallet.balance < amount) {
         throw InsufficientBalanceException();
+      }
+
+      if (sourceWallet.currency != beneficiaryWallet.currency) {
+        throw CurrencyMismatchException();
       }
 
       await tx.table('wallets').increment('balance', -amount).where({
