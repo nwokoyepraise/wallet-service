@@ -6,6 +6,16 @@ import { UsersService } from './users.service';
 describe('UsersController', () => {
   let usersController: UsersController;
   let usersService: UsersService;
+  let date = new Date();
+
+  let fakeUser: User = {
+    user_id: 'USDJIJE99HJJO',
+    email: 'email@email.com',
+    password: 'hashed-password',
+    email_verified: 0,
+    created_at: date,
+    updated_at: date,
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -35,25 +45,17 @@ describe('UsersController', () => {
   });
 
   describe('add-user', () => {
-    it('should add a user', () => {
-      let date = new Date();
-      const user: AddUserDto = {
+    it('should add a user', async () => {
+      const addUserDto: AddUserDto = {
         user_id: 'USDJIJE99HJJO',
         email: 'email@email.com',
         password: 'hashed-password',
       };
 
-      jest.spyOn(usersService, 'addUser').mockImplementation(() => {
-        return Promise.resolve(user);
+      jest.spyOn(usersService, 'addUser').mockImplementation((addUserDto) => {
+        return Promise.resolve(fakeUser);
       });
-
-      expect(usersController.addUser(user)).resolves.toEqual({
-        ...user,
-        user_id: 'USDJIJE99HJJO',
-        email_verified: 0,
-        created_at: date,
-        updated_at: date,
-      })
+      expect(await usersController.addUser(addUserDto)).toEqual(fakeUser);
     });
   });
 });
