@@ -38,7 +38,7 @@ export class WalletsController {
     return wallets;
   }
 
-  @Get(':wallet_id')
+  @Post()
   async addWallet(
     @Body() addWalletDto: AddWalletDto,
     @User() { user_id }: UserPayload,
