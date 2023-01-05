@@ -273,11 +273,17 @@ export class TransactionsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post(':transaction_id')
-  async findTransaction(@Param('transactionId') transaction_id: string) {
+  @Get(':transaction_id')
+  async findTransaction(@Param('transaction_id') transaction_id: string) {
     return await this.transactionsService.findTransaction(
       'transaction_id',
       transaction_id,
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async findTransactions(@User() { user_id }: UserPayload) {
+    return await this.transactionsService.findTransactions(user_id);
   }
 }

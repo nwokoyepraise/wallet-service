@@ -66,6 +66,18 @@ export class TransactionsService {
     )[0];
   }
 
+  async findTransactions(user_id: string): Promise<Transaction> {
+    return (
+      await this.knex
+        .select('*')
+        .from('transactions')
+        .where({ source: user_id })
+        .union(function () {
+          this.select('*').where({ beneficiary: user_id });
+        })
+    )[0];
+  }
+
   async transferFunds(
     user_id: string,
     ref: string,
