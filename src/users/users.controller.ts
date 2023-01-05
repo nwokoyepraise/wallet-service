@@ -16,12 +16,12 @@ export class UsersController {
   async addUser(@Body() addUserDto: AddUserDto) {
     let data = await this.usersService.findUser('email', addUserDto.email);
     //return if verified email already exists
-    if (data?.email && data?.emailVerified) {
+    if (data?.email && data?.email_verified == 1) {
       throw VerifiedEmailAlreadyExistsException();
     }
 
     //throw if email exists but not verified
-    if (data?.email && !data.emailVerified) {
+    if (data?.email && data.email_verified != 1) {
       throw EmailAlreadyUsedException();
     }
     addUserDto.password = await TokenHandler.hashKey(addUserDto.password);
