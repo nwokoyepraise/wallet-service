@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import {
   NotWalletOwnerException,
@@ -6,6 +6,7 @@ import {
 } from 'src/common/exceptions';
 import { User } from 'src/users/users.decorator';
 import { UserPayload } from 'src/users/users.dto';
+import { AddWalletDto } from './wallets.dto';
 import { WalletsService } from './wallets.service';
 
 @Controller('wallets')
@@ -35,5 +36,13 @@ export class WalletsController {
     let wallets = await this.walletsService.findWallets('user_id', user_id);
 
     return wallets;
+  }
+
+  @Get(':wallet_id')
+  async addWallet(
+    @Body() addWalletDto: AddWalletDto,
+    @User() { user_id }: UserPayload,
+  ) {
+    return await this.walletsService.addWallet(user_id, addWalletDto);
   }
 }
