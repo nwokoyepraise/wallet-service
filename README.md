@@ -69,7 +69,7 @@ $ docker-compose up -d
 If the local system is running Linux, ```sudo``` privileges may be need to run the commands appropriately.
 ## API Reference
 
-#### Server Ping
+#### 📞 Server Ping
 
 ```http
 GET /
@@ -80,7 +80,7 @@ Response:
   }
 ```
 
-### Authentication
+### 🔑 Authentication
 #### User Registeration
 
 ```http
@@ -135,12 +135,13 @@ Response:
 | `password`      | `string` | **Required**. |
 
 
-### Wallets
+### 🏦 Wallets
 
 #### Retrieve my Wallets
 
 ```http
 GET /wallets
+Authorization: Bearer Token <JWT>
 
 Response:
   [
@@ -159,13 +160,14 @@ Response:
 
 ```http
 GET /wallets/:wallet_id
+Authorization: Bearer Token <JWT>
 
 Response:
   {
     "wallet_id": "string",
     "user_id": "string",
     "balance": "number",
-    "currency": "ISO4217m currency code",
+    "currency": "ISO4217 currency code",
     "created_at": "date string",
     "updated_at": "date string"
   }
@@ -179,7 +181,9 @@ Response:
 #### Add wallet
 
 ```http
-POST /wallets/
+POST /wallets
+Content-Type: application/json
+Authorization: Bearer Token <JWT>
 
 Response:
   {
@@ -197,7 +201,7 @@ Response:
 | `currency`      | `ISO4217 currency code` | **Required**. |
 
 
-### Transactions
+### 🔁 Transactions
 
 #### Add funds
 
@@ -206,6 +210,7 @@ This endpoints takes in the amount reuired for funding. It returns the transacti
 ```http
 POST /transactions/fund-wallet
 Content-Type: application/json
+Authorization: Bearer Token <JWT>
 
 Response:
   {
@@ -223,6 +228,87 @@ Response:
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `amount`      | `number` | **Required**. |
+| `source_wallet`      | `string` | **Required**. |
+| `beneficiary_wallet`      | `string` | **Required**. |
+
+#### Transfer funds
+
+```http
+POST /transactions/transfer
+Content-Type: application/json
+Authorization: Bearer Token <JWT>
+
+Response:
+  {
+    "message": "success"
+  }
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `amount`      | `number` | **Required**. |
 | `wallet`      | `string` | **Required**. |
 
 
+#### Withdraw funds
+
+```http
+POST /transactions/withdraw
+Content-Type: application/json
+Authorization: Bearer Token <JWT>
+
+Response:
+  {
+    "transaction_id": "string",
+    "ref": "string",
+    "source": "string",
+    "amount": "number",
+    "currency": "NGN",
+    "status": "PENDING",
+    "type": "WITHDRAWAL"
+  }
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `amount`      | `number` | **Required**. |
+| `source_wallet`      | `string` | **Required**. |
+| `bank_code`      | `string` | **Required**. |
+| `account_number`      | `string` | **Required**. |
+
+
+#### Retrieve own Transactions
+
+```http
+GET /transactions
+Authorization: Bearer Token <JWT>
+
+Response:
+  [{
+    "transaction_id": "string",
+    "ref": "string",
+    "source": "string",
+    "amount": "number",
+    "currency": "NGN",
+    "status": "PENDING",
+    "type": "WITHDRAWAL"
+  }]
+```
+
+#### Retrieve Transaction
+
+```http
+GET /transactions/:transaction_id
+Authorization: Bearer Token <JWT>
+
+Response:
+  {
+    "transaction_id": "string",
+    "ref": "string",
+    "source": "string",
+    "amount": "number",
+    "currency": "NGN",
+    "status": "PENDING",
+    "type": "WITHDRAWAL"
+  }
+```
