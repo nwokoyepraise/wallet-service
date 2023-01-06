@@ -1,4 +1,3 @@
-import { ConflictException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { VerifiedEmailAlreadyExistsException } from '../common/exceptions';
 import { UsersController } from './users.controller';
@@ -69,7 +68,7 @@ describe('UsersController', () => {
         });
       });
 
-      expect(async ()=> {await usersController.addUser(addUserDto)}).rejects.toThrowError(ConflictException)
+      expect(async ()=> {await usersController.addUser(addUserDto)}).rejects.toThrowError(VerifiedEmailAlreadyExistsException())
     });
 
     it('should add a user', async () => {

@@ -3,7 +3,7 @@ import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 export class User {
   user_id: string;
   email: string;
-  email_verified: number;
+  email_verified: 0 | 1;
   password: string;
   created_at: Date;
   updated_at: Date;
@@ -24,5 +24,5 @@ export class AddUserDto {
 export type UserPayload = Readonly<{
   email: string;
   user_id: string;
-  email_verified: boolean,
+  email_verified: 0 | 1;
 }>;
