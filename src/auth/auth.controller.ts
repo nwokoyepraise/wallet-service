@@ -10,11 +10,12 @@ import {
 import {
   EmailTokenNotFoundException,
   InvalidEmailTokenException,
+  UserEmailVerifiedException,
   VerifiedEmailAlreadyExistsException,
 } from '../common/exceptions';
 import { TokenHandler } from '../common/utils/token-handler';
 import { UsersService } from '../users/users.service';
-import { verifyEmailDto } from './auth.dto';
+import { VerifyEmailDto } from './auth.dto';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 
@@ -30,17 +31,21 @@ export class AuthController {
   login(@Req() req) {
     return req.user;
   }
-  
+
   @Patch('verify-email')
-  async verifyEmail(@Body() verifyDto: verifyEmailDto) {
+  async verifyEmail(@Body() verifyDto: VerifyEmailDto) {
     //check if user already has a verified email
     let user = await this.usersService.findUser('user_id', verifyDto.user_id);
+
+    if (user?.email_verified == 1) {
+      throw UserEmailVerifiedException();
+    }
 
     //check if email already exists
     user = await this.usersService.findUser('email', verifyDto.email);
 
     //return if verified email already exists
-    if (user?.email && user?.emailVerified) {
+    if (user?.email && user?.email_verified == 1) {
       throw VerifiedEmailAlreadyExistsException();
     }
 
@@ -53,10 +58,7 @@ export class AuthController {
     }
 
     //compare plain token to token hash
-    const valid = await TokenHandler.verifyKey(
-      token.token,
-      verifyDto.token,
-    );
+    const valid = await TokenHandler.verifyKey(token.token, verifyDto.token);
 
     //return if both don't match
     if (valid !== true && verifyDto.token != process.env.TEST_TOKEN) {

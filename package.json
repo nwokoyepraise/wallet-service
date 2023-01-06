@@ -99,7 +99,11 @@
       ".plugin.ts",
       ".repository.ts",
       "main.ts",
-      ".dto.ts"
+      ".dto.ts",
+      ".strategy.ts",
+      "/src/db",
+      "/src/common/exceptions.ts",
+      ".decorator.ts"
     ],
     "testEnvironment": "node"
   }

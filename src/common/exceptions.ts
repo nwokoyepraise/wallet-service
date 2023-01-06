@@ -13,6 +13,9 @@ export const EmailAlreadyUsedException = () =>
 export const VerifiedEmailAlreadyExistsException = () =>
   new ConflictException('verified email already exists');
 
+export const UserEmailVerifiedException = () =>
+  new ConflictException('user email already verified');
+
 export const EmailTokenNotFoundException = () =>
   new NotFoundException('token not found');
 
@@ -41,10 +44,12 @@ export const InvalidAccountException = () =>
   new ForbiddenException('account is not valid');
 
 export const InsufficientBalanceException = () =>
-new BadRequestException('insufficient balance');
+  new BadRequestException('insufficient balance');
 
 export const CurrencyMismatchException = () =>
-new BadRequestException('currency mismatch between source and beneficiary wallets');
+  new BadRequestException(
+    'currency mismatch between source and beneficiary wallets',
+  );
 
 export const IllegalResourceAccessException = () =>
   new ForbiddenException('forbidden from viewing resource');

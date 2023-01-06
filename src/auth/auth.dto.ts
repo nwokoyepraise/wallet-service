@@ -1,6 +1,6 @@
 import { IsEmail, MaxLength, IsNotEmpty, IsString, IsNumberString } from 'class-validator';
 
-export class verifyEmailDto {
+export class VerifyEmailDto {
   @IsEmail()
   @MaxLength(255)
   readonly email: string;
