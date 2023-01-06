@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Observable, of } from 'rxjs';
-import { JwtStrategy } from 'src/auth/jwt.strategy';
+import { of } from 'rxjs';
+import { UnableToCreatePaymentLinkException, WalletNotFoundException } from '../common/exceptions';
 import { Iso4217 } from '../common/enums';
 import { WalletsService } from '../wallets/wallets.service';
 import { TransactionsController } from './transactions.controller';
@@ -29,6 +29,14 @@ describe('TransactionsController', () => {
 
   let initiateFundingResponse= {
     data: {data:{link: 'https://example.com/any-link'}, status: 'success'},
+    headers: {},
+    config: { url: 'https://example.com/fake-url' },
+    status: 200,
+    statusText: 'OK',
+  };
+
+  let negativeInitiateFundingResponse= {
+    data: {data:{link: 'https://example.com/any-link'}, status: 'failed'},
     headers: {},
     config: { url: 'https://example.com/fake-url' },
     status: 200,
@@ -72,6 +80,99 @@ describe('TransactionsController', () => {
   });
 
   describe('fund-wallet', () => {
+    it('should fund not fund wallet because wallet doesn"t exist', async () => {
+      jest
+        .spyOn(transactionsService, 'initiateWalletFunding')
+        .mockImplementation(() => {
+          return Promise.resolve(fakeTransaction);
+        });
+
+      jest.spyOn(walletsService, 'walletExists').mockImplementation(() => {
+        return Promise.resolve(false);
+      });
+
+      jest.spyOn(httpService, 'post').mockImplementation(()=> of(initiateFundingResponse))
+
+      expect( async () => {
+        await transactionsController.fundWallet(
+          {
+            currency: fakeTransaction.currency,
+            amount: fakeTransaction.amount,
+            wallet_id,
+          },
+          {
+            user_id,
+            email: 'email@email.com',
+            email_verified: 1,
+          },
+        )
+      }
+       
+      ).rejects.toThrowError(WalletNotFoundException());
+    });
+
+    it('should fund not fund wallet because transaction couldn"t be added', async () => {
+      jest
+        .spyOn(transactionsService, 'initiateWalletFunding')
+        .mockImplementation(() => {
+          return Promise.resolve(null);
+        });
+
+      jest.spyOn(walletsService, 'walletExists').mockImplementation(() => {
+        return Promise.resolve(true);
+      });
+
+      jest.spyOn(httpService, 'post').mockImplementation(()=> of(initiateFundingResponse))
+
+      expect( async () => {
+        await transactionsController.fundWallet(
+          {
+            currency: fakeTransaction.currency,
+            amount: fakeTransaction.amount,
+            wallet_id,
+          },
+          {
+            user_id,
+            email: 'email@email.com',
+            email_verified: 1,
+          },
+        )
+      }
+       
+      ).rejects.toThrowError(UnableToCreatePaymentLinkException());
+    });
+
+    it('should fund not fund wallet because link couldn"t be obtained from payment gateway', async () => {
+      jest
+        .spyOn(transactionsService, 'initiateWalletFunding')
+        .mockImplementation(() => {
+          return Promise.resolve(fakeTransaction);
+        });
+
+      jest.spyOn(walletsService, 'walletExists').mockImplementation(() => {
+        return Promise.resolve(true);
+      });
+
+      jest.spyOn(httpService, 'post').mockImplementation(()=> of(negativeInitiateFundingResponse))
+
+      expect( async () => {
+        await transactionsController.fundWallet(
+          {
+            currency: fakeTransaction.currency,
+            amount: fakeTransaction.amount,
+            wallet_id,
+          },
+          {
+            user_id,
+            email: 'email@email.com',
+            email_verified: 1,
+          },
+        )
+      }
+       
+      ).rejects.toThrowError(UnableToCreatePaymentLinkException());
+    });
+
     it('should fund wallet', async () => {
       jest
         .spyOn(transactionsService, 'initiateWalletFunding')

@@ -160,7 +160,7 @@ export class TransactionsController {
     @Query() query: { status: string; tx_ref: string; transaction_id: string },
     @Param('transaction_id') transaction_id: string,
   ) {
-    if (query?.status === 'successful') {
+    if (query?.status === 'successful' || query?.status === 'success') {
       let transaction = await this.transactionsService.findTransaction(
         'transaction_id',
         transaction_id,
