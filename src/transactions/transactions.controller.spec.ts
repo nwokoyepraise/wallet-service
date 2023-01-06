@@ -2,9 +2,11 @@ import { HttpService } from '@nestjs/axios';
 import { Test, TestingModule } from '@nestjs/testing';
 import { of } from 'rxjs';
 import {
+  IllegalResourceAccessException,
   InsufficientBalanceException,
   InvalidAccountException,
   NotWalletOwnerException,
+  TransactionNotFoundException,
   UnableToCreatePaymentLinkException,
   WalletNotFoundException,
 } from '../common/exceptions';
@@ -465,6 +467,44 @@ describe('TransactionsController', () => {
   });
 
   describe('findTransaction', () => {
+    it('should not find a transaction because transaction doesn"t exist', async () => {
+      jest
+        .spyOn(transactionsService, 'findTransaction')
+        .mockImplementation(() => {
+          return Promise.resolve(null);
+        });
+
+      expect(async () => {
+        await transactionsController.findTransaction(
+          fakeTransaction.transaction_id,
+          {
+            user_id,
+            email: 'email@email.com',
+            email_verified: 1,
+          },
+        );
+      }).rejects.toThrowError(TransactionNotFoundException())
+    });
+
+    it('should not find a transaction because transaction cannot be resolved successfully', async () => {
+      jest
+        .spyOn(transactionsService, 'findTransaction')
+        .mockImplementation(() => {
+          return Promise.resolve(fakeTransaction);
+        });
+
+      expect(async () => {
+        await transactionsController.findTransaction(
+          fakeTransaction.transaction_id,
+          {
+            user_id: 'US00930003993',
+            email: 'email@email.com',
+            email_verified: 1,
+          },
+        );
+      }).rejects.toThrowError(IllegalResourceAccessException())
+    });
+
     it('should find a transaction', async () => {
       jest
         .spyOn(transactionsService, 'findTransaction')
@@ -490,10 +530,11 @@ describe('TransactionsController', () => {
         });
 
       expect(
-        await transactionsController.findTransactions(
-         
-          { user_id, email: 'email@email.com', email_verified: 1 },
-        ),
+        await transactionsController.findTransactions({
+          user_id,
+          email: 'email@email.com',
+          email_verified: 1,
+        }),
       ).toEqual([fakeTransaction]);
     });
   });

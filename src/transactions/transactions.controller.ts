@@ -284,7 +284,11 @@ export class TransactionsController {
       transaction_id,
     );
 
-    if (transaction.source != user_id && transaction.beneficiary != user_id) {
+    if (!transaction?.transaction_id) {
+      throw TransactionNotFoundException();
+    }
+
+    if (transaction?.source != user_id && transaction?.beneficiary != user_id) {
       throw IllegalResourceAccessException();
     }
     return transaction;
