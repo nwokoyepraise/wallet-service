@@ -12,6 +12,7 @@ import { FundWalletDto, TransferDto } from './transactions.dto';
 import { TransactionStatus, TransactionType } from './transactions.enum';
 import { TransactionsService } from './transactions.service';
 import { InternalServerErrorException } from '@nestjs/common';
+import { Wallet } from '../wallets/wallets.dto';
 
 describe('TransactionsController', () => {
   let transactionsController: TransactionsController;
@@ -31,6 +32,17 @@ describe('TransactionsController', () => {
     type: TransactionType.FUNDING,
   };
 
+  let fakeWithdrawalTransaction = {
+    transaction_id: `tr${ref}`,
+    ref,
+    source: 'USDJIJE99HJJO',
+    amount: 3000,
+    currency: Iso4217.NGN,
+    status: TransactionStatus.PENDING,
+    type: TransactionType.WITHDRAWAL,
+  };
+
+
   let initiateFundingResponse = {
     data: { data: { link: 'https://example.com/any-link' }, status: 'success' },
     headers: {},
@@ -45,6 +57,13 @@ describe('TransactionsController', () => {
     config: { url: 'https://example.com/fake-url' },
     status: 200,
     statusText: 'OK',
+  };
+
+  let fakeWallet: Wallet = {
+    wallet_id: 'WA89JHHKDGE7',
+    user_id: 'USDJIJE99HJJO',
+    balance: 250000,
+    currency: Iso4217.NGN,
   };
 
   beforeEach(async () => {
@@ -231,7 +250,7 @@ describe('TransactionsController', () => {
           email: 'email@email.com',
           email_verified: 1,
         });
-      }).rejects.toThrowError(InternalServerErrorException)
+      }).rejects.toThrowError(InternalServerErrorException);
     });
 
     it('should be able to transfer funds', async () => {
@@ -248,6 +267,41 @@ describe('TransactionsController', () => {
           email_verified: 1,
         }),
       ).toEqual({ message: 'success' });
+    });
+  });
+
+  describe('withdraw-funds', () => {
+    let transferDto: TransferDto = {
+      amount: 3000,
+      source_wallet: 'WA000000000001',
+      beneficiary_wallet: 'WA0000000000002',
+    };
+
+    it('should be able to initiate withdrawals', async () => {
+      jest
+        .spyOn(transactionsController, 'resolveAccount')
+        .mockImplementation(() => {
+          return Promise.resolve({ status: 'success' });
+        });
+
+      jest.spyOn(walletsService, 'findWallet').mockImplementation(() => {
+        return Promise.resolve(fakeWallet);
+      });
+
+      jest
+        .spyOn(transactionsService, 'initiateWithdrawal')
+        .mockImplementation(() => {
+          return Promise.resolve(fakeWithdrawalTransaction);
+        });
+
+      expect(
+        await transactionsService.initiateWithdrawal(
+          fakeWallet.user_id,
+          fakeWallet.currency,
+          'ref',
+          3000,
+        ),
+      ).toBe(fakeWithdrawalTransaction);
     });
   });
 });

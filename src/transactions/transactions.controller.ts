@@ -226,7 +226,7 @@ export class TransactionsController {
 
   @UseGuards(JwtAuthGuard)
   @Post('withdraw')
-  async intiatiateWithdrawal(
+  async initiateWithdrawal(
     @Body() { account_number, amount, bank_code, source_wallet }: WithdrawalDto,
     @User() { user_id }: UserPayload,
   ) {
