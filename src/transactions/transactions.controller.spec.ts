@@ -109,6 +109,7 @@ describe('TransactionsController', () => {
             initiateWalletFunding: jest.fn(),
             completeWalletFunding: jest.fn(),
             findTransaction: jest.fn(),
+            findTransactions: jest.fn(),
             transferFunds: jest.fn(),
             initiateWithdrawal: jest.fn(),
             completeWithdrawal: jest.fn(),
@@ -449,7 +450,7 @@ describe('TransactionsController', () => {
         .mockImplementation(() => {
           return Promise.resolve(true);
         });
-     
+
       expect(
         await transactionsController.paymentCallback(
           {
@@ -460,6 +461,40 @@ describe('TransactionsController', () => {
           fakeTransaction.transaction_id,
         ),
       ).toEqual({ message: 'success' });
+    });
+  });
+
+  describe('findTransaction', () => {
+    it('should find a transaction', async () => {
+      jest
+        .spyOn(transactionsService, 'findTransaction')
+        .mockImplementation(() => {
+          return Promise.resolve(fakeTransaction);
+        });
+
+      expect(
+        await transactionsController.findTransaction(
+          fakeTransaction.transaction_id,
+          { user_id, email: 'email@email.com', email_verified: 1 },
+        ),
+      ).toEqual(fakeTransaction);
+    });
+  });
+
+  describe('findTransactions', () => {
+    it('should find transactions', async () => {
+      jest
+        .spyOn(transactionsService, 'findTransactions')
+        .mockImplementation(() => {
+          return Promise.resolve([fakeTransaction]);
+        });
+
+      expect(
+        await transactionsController.findTransactions(
+         
+          { user_id, email: 'email@email.com', email_verified: 1 },
+        ),
+      ).toEqual([fakeTransaction]);
     });
   });
 });
