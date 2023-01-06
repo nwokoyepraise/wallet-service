@@ -1,11 +1,14 @@
 import { HttpService } from '@nestjs/axios';
 import { Test, TestingModule } from '@nestjs/testing';
 import { of } from 'rxjs';
-import { UnableToCreatePaymentLinkException, WalletNotFoundException } from '../common/exceptions';
+import {
+  UnableToCreatePaymentLinkException,
+  WalletNotFoundException,
+} from '../common/exceptions';
 import { Iso4217 } from '../common/enums';
 import { WalletsService } from '../wallets/wallets.service';
 import { TransactionsController } from './transactions.controller';
-import { FundWalletDto } from './transactions.dto';
+import { FundWalletDto, TransferDto } from './transactions.dto';
 import { TransactionStatus, TransactionType } from './transactions.enum';
 import { TransactionsService } from './transactions.service';
 
@@ -13,7 +16,7 @@ describe('TransactionsController', () => {
   let transactionsController: TransactionsController;
   let transactionsService: TransactionsService;
   let walletsService: WalletsService;
-  let httpService: HttpService
+  let httpService: HttpService;
   let ref = 'hd90dHJiieo9buW3';
   let wallet_id = 'WA89JHHKDGE7';
   let user_id = 'USDJIJE99HJJO';
@@ -27,22 +30,21 @@ describe('TransactionsController', () => {
     type: TransactionType.FUNDING,
   };
 
-  let initiateFundingResponse= {
-    data: {data:{link: 'https://example.com/any-link'}, status: 'success'},
+  let initiateFundingResponse = {
+    data: { data: { link: 'https://example.com/any-link' }, status: 'success' },
     headers: {},
     config: { url: 'https://example.com/fake-url' },
     status: 200,
     statusText: 'OK',
   };
 
-  let negativeInitiateFundingResponse= {
-    data: {data:{link: 'https://example.com/any-link'}, status: 'failed'},
+  let negativeInitiateFundingResponse = {
+    data: { data: { link: 'https://example.com/any-link' }, status: 'failed' },
     headers: {},
     config: { url: 'https://example.com/fake-url' },
     status: 200,
     statusText: 'OK',
   };
-
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -63,7 +65,7 @@ describe('TransactionsController', () => {
           provide: WalletsService,
           useValue: { walletExists: jest.fn(), findWallet: jest.fn() },
         },
-        { provide: HttpService, useValue: {post: jest.fn()} },
+        { provide: HttpService, useValue: { post: jest.fn() } },
       ],
     }).compile();
 
@@ -91,9 +93,11 @@ describe('TransactionsController', () => {
         return Promise.resolve(false);
       });
 
-      jest.spyOn(httpService, 'post').mockImplementation(()=> of(initiateFundingResponse))
+      jest
+        .spyOn(httpService, 'post')
+        .mockImplementation(() => of(initiateFundingResponse));
 
-      expect( async () => {
+      expect(async () => {
         await transactionsController.fundWallet(
           {
             currency: fakeTransaction.currency,
@@ -105,10 +109,8 @@ describe('TransactionsController', () => {
             email: 'email@email.com',
             email_verified: 1,
           },
-        )
-      }
-       
-      ).rejects.toThrowError(WalletNotFoundException());
+        );
+      }).rejects.toThrowError(WalletNotFoundException());
     });
 
     it('should fund not fund wallet because transaction couldn"t be added', async () => {
@@ -122,9 +124,11 @@ describe('TransactionsController', () => {
         return Promise.resolve(true);
       });
 
-      jest.spyOn(httpService, 'post').mockImplementation(()=> of(initiateFundingResponse))
+      jest
+        .spyOn(httpService, 'post')
+        .mockImplementation(() => of(initiateFundingResponse));
 
-      expect( async () => {
+      expect(async () => {
         await transactionsController.fundWallet(
           {
             currency: fakeTransaction.currency,
@@ -136,10 +140,8 @@ describe('TransactionsController', () => {
             email: 'email@email.com',
             email_verified: 1,
           },
-        )
-      }
-       
-      ).rejects.toThrowError(UnableToCreatePaymentLinkException());
+        );
+      }).rejects.toThrowError(UnableToCreatePaymentLinkException());
     });
 
     it('should fund not fund wallet because link couldn"t be obtained from payment gateway', async () => {
@@ -153,9 +155,11 @@ describe('TransactionsController', () => {
         return Promise.resolve(true);
       });
 
-      jest.spyOn(httpService, 'post').mockImplementation(()=> of(negativeInitiateFundingResponse))
+      jest
+        .spyOn(httpService, 'post')
+        .mockImplementation(() => of(negativeInitiateFundingResponse));
 
-      expect( async () => {
+      expect(async () => {
         await transactionsController.fundWallet(
           {
             currency: fakeTransaction.currency,
@@ -167,10 +171,8 @@ describe('TransactionsController', () => {
             email: 'email@email.com',
             email_verified: 1,
           },
-        )
-      }
-       
-      ).rejects.toThrowError(UnableToCreatePaymentLinkException());
+        );
+      }).rejects.toThrowError(UnableToCreatePaymentLinkException());
     });
 
     it('should fund wallet', async () => {
@@ -184,7 +186,9 @@ describe('TransactionsController', () => {
         return Promise.resolve(true);
       });
 
-      jest.spyOn(httpService, 'post').mockImplementation(()=> of(initiateFundingResponse))
+      jest
+        .spyOn(httpService, 'post')
+        .mockImplementation(() => of(initiateFundingResponse));
 
       expect(
         await transactionsController.fundWallet(
@@ -199,7 +203,33 @@ describe('TransactionsController', () => {
             email_verified: 1,
           },
         ),
-      ).toEqual({link:initiateFundingResponse.data.data.link, ...fakeTransaction});
+      ).toEqual({
+        link: initiateFundingResponse.data.data.link,
+        ...fakeTransaction,
+      });
+    });
+  });
+
+  describe('transfer-funds', () => {
+    let transferDto: TransferDto = {
+      amount: 3000,
+      source_wallet: 'WA000000000001',
+      beneficiary_wallet: 'WA0000000000002',
+    };
+    it('should be able to transfer funds', async () => {
+      jest
+        .spyOn(transactionsService, 'transferFunds')
+        .mockImplementation(() => {
+          return Promise.resolve(true);
+        });
+
+      expect(
+        await transactionsController.transferFunds(transferDto, {
+          user_id,
+          email: 'email@email.com',
+          email_verified: 1,
+        }),
+      ).toEqual({ message: 'success' });
     });
   });
 });
