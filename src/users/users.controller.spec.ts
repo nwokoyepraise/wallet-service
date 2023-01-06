@@ -69,9 +69,7 @@ describe('UsersController', () => {
         });
       });
 
-      expect(await usersController.addUser(addUserDto)).toThrow(
-        ConflictException,
-      );
+      expect(async ()=> {await usersController.addUser(addUserDto)}).rejects.toThrowError(ConflictException)
     });
 
     it('should add a user', async () => {
@@ -80,6 +78,8 @@ describe('UsersController', () => {
         email: 'email@email.com',
         password: 'hashed-password',
       };
+
+      jest.spyOn(usersService, 'findUser').mockRestore();
 
       jest.spyOn(usersService, 'addUser').mockImplementation((addUserDto) => {
         return Promise.resolve(fakeUser);

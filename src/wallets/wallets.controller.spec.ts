@@ -9,7 +9,16 @@ describe('WalletsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [WalletsController],
-      providers: [WalletsService],
+      providers: [
+        {
+          provide: WalletsService,
+          useValue: {
+            findWallet: jest.fn(),
+            findWallets: jest.fn(),
+            addWallet: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     walletsController = module.get<WalletsController>(WalletsController);
