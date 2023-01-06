@@ -11,6 +11,7 @@ import {
   UserEmailVerifiedException,
   VerifiedEmailAlreadyExistsException,
 } from '../common/exceptions';
+import { InternalServerErrorException } from '@nestjs/common';
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -38,7 +39,7 @@ describe('AuthController', () => {
     expect(authController).toBeDefined();
   });
 
-  describe('verify-email', () => {
+  describe('verifyEmail', () => {
     let date = new Date();
     // let verifyEmailDto: VerifyEmailDto = {
     //   email: 'email@email.com',
@@ -143,6 +144,43 @@ describe('AuthController', () => {
         });
       }).rejects.toThrowError(InvalidEmailTokenException());
     });
+
+    it('should not verify email because of internal error', async () => {
+      jest.spyOn(usersService, 'findUser').mockImplementation(() => {
+        return Promise.resolve({
+          user_id: 'USDJIJE99HJJ0',
+          email: 'email@email.com',
+          password: 'hashed-password',
+          email_verified: 0,
+          created_at: date,
+          updated_at: date,
+        });
+      });
+
+      jest.spyOn(authService, 'getEmailToken').mockImplementation(() => {
+        return Promise.resolve({
+          user_id: 'USDJIJE99HJJO',
+          email: 'email@email.com',
+          token:
+            '$argon2i$v=19$m=16,t=2,p=1$bm9oaXBpaHBpaGloaQ$Z3QvaYD3qXQIob9eLTl5Ig',
+          created_at: date,
+          updated_at: date,
+        });
+      });
+
+      jest.spyOn(authService, 'verifyEmailToken').mockImplementation(() => {
+        return Promise.resolve(false);
+      });
+
+      expect(async () => {
+        await authController.verifyEmail({
+          email: 'email@email.com',
+          token: '123456',
+          user_id: 'USDJIJE99HJJO',
+        });
+      }).rejects.toThrowError(InternalServerErrorException);
+    });
+
 
     it('should be able to verify email', async () => {
       jest.spyOn(usersService, 'findUser').mockImplementation(() => {
