@@ -103,7 +103,8 @@
       ".strategy.ts",
       "/src/db",
       "/src/common/exceptions.ts",
-      ".decorator.ts"
+      ".decorator.ts",
+      ".service.ts"
     ],
     "testEnvironment": "node"
   }

@@ -29,6 +29,7 @@ describe('TransactionsController', () => {
     transaction_id: `tr${ref}`,
     ref,
     source: 'USDJIJE99HJJO',
+    beneficiary: null,
     amount: 1000,
     currency: Iso4217.NGN,
     status: TransactionStatus.PENDING,
@@ -39,6 +40,7 @@ describe('TransactionsController', () => {
     transaction_id: `tr${ref}`,
     ref,
     source: 'USDJIJE99HJJO',
+    beneficiary: null,
     amount: 3000,
     currency: Iso4217.NGN,
     status: TransactionStatus.PENDING,
@@ -55,6 +57,19 @@ describe('TransactionsController', () => {
 
   let resolveAccountResponse = {
     data: { data: { status: 'success' } },
+    headers: {},
+    config: { url: 'https://example.com/fake-url' },
+    status: 200,
+    statusText: 'OK',
+  };
+
+  let verifyPaymentResponse = {
+    data: {
+      data: {
+        status: 'success',
+        meta: { wallet_id: fakeWithdrawalTransaction.source },
+      },
+    },
     headers: {},
     config: { url: 'https://example.com/fake-url' },
     status: 200,
@@ -103,7 +118,7 @@ describe('TransactionsController', () => {
           provide: WalletsService,
           useValue: { walletExists: jest.fn(), findWallet: jest.fn() },
         },
-        { provide: HttpService, useValue: { post: jest.fn() } },
+        { provide: HttpService, useValue: { post: jest.fn(), get: jest.fn() } },
       ],
     }).compile();
 
@@ -414,6 +429,37 @@ describe('TransactionsController', () => {
           email_verified: 1,
         }),
       ).toBe(fakeWithdrawalTransaction);
+    });
+  });
+
+  describe('paymentCallback', () => {
+    it('should process payment callback', async () => {
+      jest
+        .spyOn(transactionsService, 'findTransaction')
+        .mockImplementation(() => {
+          return Promise.resolve(fakeWithdrawalTransaction);
+        });
+
+      jest
+        .spyOn(httpService, 'get')
+        .mockImplementation(() => of(verifyPaymentResponse));
+
+      jest
+        .spyOn(transactionsService, 'completeWalletFunding')
+        .mockImplementation(() => {
+          return Promise.resolve(true);
+        });
+     
+      expect(
+        await transactionsController.paymentCallback(
+          {
+            status: 'success',
+            tx_ref: 'string',
+            transaction_id: fakeWithdrawalTransaction.transaction_id,
+          },
+          fakeTransaction.transaction_id,
+        ),
+      ).toEqual({ message: 'success' });
     });
   });
 });
