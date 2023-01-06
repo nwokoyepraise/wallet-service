@@ -6,7 +6,7 @@ describe('TransactionsService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TransactionsService],
+      providers: [TransactionsService, {provide: 'default_KnexModuleConnectionToken', useValue: jest.fn()}],
     }).compile();
 
     service = module.get<TransactionsService>(TransactionsService);
