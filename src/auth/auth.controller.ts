@@ -37,7 +37,7 @@ export class AuthController {
     //check if user already has a verified email
     let user = await this.usersService.findUser('user_id', verifyDto.user_id);
 
-    if (user?.email_verified == 1) {
+    if (user?.user_id == verifyDto.user_id && user?.email_verified == 1) {
       throw UserEmailVerifiedException();
     }
 

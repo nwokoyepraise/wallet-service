@@ -1,8 +1,16 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from '../users/users.service';
 import { AuthController } from './auth.controller';
 import { VerifyEmailDto } from './auth.dto';
 import { AuthService } from './auth.service';
+import {
+  EmailTokenNotFoundException,
+  InvalidEmailTokenException,
+  UserEmailVerifiedException,
+  VerifiedEmailAlreadyExistsException,
+} from '../common/exceptions';
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -37,6 +45,105 @@ describe('AuthController', () => {
     //   token: '123456',
     //   user_id: 'USDJIJE99HJJO',
     // };
+    it('should not verify email because user have already verified email', async () => {
+      jest.spyOn(usersService, 'findUser').mockImplementation(() => {
+        return Promise.resolve({
+          user_id: 'USDJIJE99HJJO',
+          email: 'email@email.com',
+          password: 'hashed-password',
+          email_verified: 1,
+          created_at: date,
+          updated_at: date,
+        });
+      });
+
+      expect(async () => {
+        await authController.verifyEmail({
+          email: 'email@email.com',
+          token: '123456',
+          user_id: 'USDJIJE99HJJO',
+        });
+      }).rejects.toThrowError(UserEmailVerifiedException());
+    });
+
+    it('should not verify email because the email has already been verified', async () => {
+      jest.spyOn(usersService, 'findUser').mockImplementation(() => {
+        return Promise.resolve({
+          user_id: 'USDJIJE99HJJ1',
+          email: 'email@email.com',
+          password: 'hashed-password',
+          email_verified: 1,
+          created_at: date,
+          updated_at: date,
+        });
+      });
+
+      expect(async () => {
+        await authController.verifyEmail({
+          email: 'email@email.com',
+          token: '123456',
+          user_id: 'USDJIJE99HJJO',
+        });
+      }).rejects.toThrowError(VerifiedEmailAlreadyExistsException());
+    });
+
+    it('should not verify email because email token doesn"t exist', async () => {
+      jest.spyOn(usersService, 'findUser').mockImplementation(() => {
+        return Promise.resolve({
+          user_id: 'USDJIJE99HJJ0',
+          email: 'email@email.com',
+          password: 'hashed-password',
+          email_verified: 0,
+          created_at: date,
+          updated_at: date,
+        });
+      });
+
+      jest.spyOn(authService, 'getEmailToken').mockImplementation(() => {
+        return Promise.resolve(null);
+      });
+
+      expect(async () => {
+        await authController.verifyEmail({
+          email: 'email@email.com',
+          token: '123456',
+          user_id: 'USDJIJE99HJJO',
+        });
+      }).rejects.toThrowError(EmailTokenNotFoundException());
+    });
+
+    it('should not verify email because email token doesn"t exist', async () => {
+      jest.spyOn(usersService, 'findUser').mockImplementation(() => {
+        return Promise.resolve({
+          user_id: 'USDJIJE99HJJ0',
+          email: 'email@email.com',
+          password: 'hashed-password',
+          email_verified: 0,
+          created_at: date,
+          updated_at: date,
+        });
+      });
+
+      jest.spyOn(authService, 'getEmailToken').mockImplementation(() => {
+        return Promise.resolve({
+          user_id: 'USDJIJE99HJJO',
+          email: 'email@email.com',
+          token:
+            '$argon2i$v=19$m=16,t=2,p=1$bm9oaXBpaHBpaGloaQ$Z3QvaYD3qXQIob9eLTl5Ig',
+          created_at: date,
+          updated_at: date,
+        });
+      });
+
+      expect(async () => {
+        await authController.verifyEmail({
+          email: 'email@email.com',
+          token: '768889',
+          user_id: 'USDJIJE99HJJO',
+        });
+      }).rejects.toThrowError(InvalidEmailTokenException());
+    });
+
     it('should be able to verify email', async () => {
       jest.spyOn(usersService, 'findUser').mockImplementation(() => {
         return Promise.resolve({
@@ -63,7 +170,7 @@ describe('AuthController', () => {
       jest.spyOn(authService, 'verifyEmailToken').mockImplementation(() => {
         return Promise.resolve(true);
       });
-      process.env.TEST_TOKEN = '123456';
+
       expect(
         await authController.verifyEmail({
           email: 'email@email.com',
