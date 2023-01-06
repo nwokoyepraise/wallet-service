@@ -11,6 +11,7 @@ import { TransactionsController } from './transactions.controller';
 import { FundWalletDto, TransferDto } from './transactions.dto';
 import { TransactionStatus, TransactionType } from './transactions.enum';
 import { TransactionsService } from './transactions.service';
+import { InternalServerErrorException } from '@nestjs/common';
 
 describe('TransactionsController', () => {
   let transactionsController: TransactionsController;
@@ -216,6 +217,23 @@ describe('TransactionsController', () => {
       source_wallet: 'WA000000000001',
       beneficiary_wallet: 'WA0000000000002',
     };
+
+    it('should be not be able to transfer funds because of transaction failure', async () => {
+      jest
+        .spyOn(transactionsService, 'transferFunds')
+        .mockImplementation(() => {
+          return Promise.resolve(false);
+        });
+
+      expect(async () => {
+        await transactionsController.transferFunds(transferDto, {
+          user_id,
+          email: 'email@email.com',
+          email_verified: 1,
+        });
+      }).rejects.toThrowError(InternalServerErrorException)
+    });
+
     it('should be able to transfer funds', async () => {
       jest
         .spyOn(transactionsService, 'transferFunds')
