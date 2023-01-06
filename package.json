@@ -85,6 +85,22 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "test-config",
+      "interfaces",
+      "jestGlobalMocks.ts",
+      ".module.ts",
+      "<rootDir>/src/main.ts",
+      ".mock.ts",
+      "constants.ts",
+      "params.ts",
+      ".enum.ts",
+      ".plugin.ts",
+      ".repository.ts",
+      "main.ts",
+      ".dto.ts"
+    ],
     "testEnvironment": "node"
   }
 }

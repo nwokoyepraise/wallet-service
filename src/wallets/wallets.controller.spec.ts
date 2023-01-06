@@ -18,8 +18,6 @@ describe('WalletsController', () => {
     user_id: 'USDJIJE99HJJO',
     balance: 0,
     currency: Iso4217.NGN,
-    // created_at: date,
-    // updated_at: date,
   };
 
   beforeEach(async () => {
@@ -106,9 +104,17 @@ describe('WalletsController', () => {
       currency: Iso4217.NGN,
     };
 
-    jest.spyOn(walletsService, 'addWallet').mockImplementation((addWalletDto) => {
-      return Promise.resolve(fakeWallet);
-    });
-    expect(await walletsService.addWallet(fakeWallet.user_id, addWalletDto)).toEqual(fakeWallet);
+    jest
+      .spyOn(walletsService, 'addWallet')
+      .mockImplementation((addWalletDto) => {
+        return Promise.resolve(fakeWallet);
+      });
+    expect(
+      await walletsController.addWallet(addWalletDto, {
+        user_id: fakeWallet.user_id,
+        email: 'email@email.com',
+        email_verified: 1,
+      }),
+    ).toEqual(fakeWallet);
   });
 });
