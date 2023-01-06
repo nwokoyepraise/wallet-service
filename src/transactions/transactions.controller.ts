@@ -232,7 +232,7 @@ export class TransactionsController {
   ) {
     let account = await this.resolveAccount(bank_code, account_number);
 
-    if (account?.status != 'success') {
+    if (account?.status !== 'success') {
       throw InvalidAccountException();
     }
 
@@ -246,7 +246,7 @@ export class TransactionsController {
     }
 
     if (wallet.user_id != user_id) {
-      throw !NotWalletOwnerException();
+      throw NotWalletOwnerException();
     }
 
     if (wallet.balance < amount) {

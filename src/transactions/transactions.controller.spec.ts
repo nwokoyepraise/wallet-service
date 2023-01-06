@@ -2,13 +2,16 @@ import { HttpService } from '@nestjs/axios';
 import { Test, TestingModule } from '@nestjs/testing';
 import { of } from 'rxjs';
 import {
+  InsufficientBalanceException,
+  InvalidAccountException,
+  NotWalletOwnerException,
   UnableToCreatePaymentLinkException,
   WalletNotFoundException,
 } from '../common/exceptions';
-import { Iso4217 } from '../common/enums';
+import { BankCode, Iso4217 } from '../common/enums';
 import { WalletsService } from '../wallets/wallets.service';
 import { TransactionsController } from './transactions.controller';
-import { FundWalletDto, TransferDto } from './transactions.dto';
+import { FundWalletDto, TransferDto, WithdrawalDto } from './transactions.dto';
 import { TransactionStatus, TransactionType } from './transactions.enum';
 import { TransactionsService } from './transactions.service';
 import { InternalServerErrorException } from '@nestjs/common';
@@ -42,9 +45,24 @@ describe('TransactionsController', () => {
     type: TransactionType.WITHDRAWAL,
   };
 
-
   let initiateFundingResponse = {
     data: { data: { link: 'https://example.com/any-link' }, status: 'success' },
+    headers: {},
+    config: { url: 'https://example.com/fake-url' },
+    status: 200,
+    statusText: 'OK',
+  };
+
+  let resolveAccountResponse = {
+    data: { data: { status: 'success' } },
+    headers: {},
+    config: { url: 'https://example.com/fake-url' },
+    status: 200,
+    statusText: 'OK',
+  };
+
+  let negativeResolveAccountResponse = {
+    data: { data: { status: 'failed' } },
     headers: {},
     config: { url: 'https://example.com/fake-url' },
     status: 200,
@@ -271,19 +289,104 @@ describe('TransactionsController', () => {
   });
 
   describe('withdraw-funds', () => {
-    let transferDto: TransferDto = {
+    let withdrawalDto: WithdrawalDto = {
+      account_number: '000000000000',
+      bank_code: BankCode.ACCESS_BANK,
       amount: 3000,
-      source_wallet: 'WA000000000001',
-      beneficiary_wallet: 'WA0000000000002',
+      source_wallet: wallet_id,
     };
 
-    it('should be able to initiate withdrawals', async () => {
+    it('should be not be able to initiate withdrawal because of invalid account details', async () => {
+      jest
+        .spyOn(httpService, 'post')
+        .mockImplementation(() => of(negativeResolveAccountResponse));
+
+      expect(async () => {
+        await transactionsController.initiateWithdrawal(withdrawalDto, {
+          user_id,
+          email: 'email@email.com',
+          email_verified: 1,
+        });
+      }).rejects.toThrowError(InvalidAccountException());
+    });
+
+    it('should be not be able to initiate withdrawal because initiatiator is not wallet owner', async () => {
+      jest.spyOn(httpService, 'post').mockClear();
+      jest
+        .spyOn(httpService, 'post')
+        .mockImplementation(() => of(resolveAccountResponse));
+
+      jest.spyOn(walletsService, 'findWallet').mockImplementation(() => {
+        return Promise.resolve(fakeWallet);
+      });
+
       jest
         .spyOn(transactionsController, 'resolveAccount')
         .mockImplementation(() => {
           return Promise.resolve({ status: 'success' });
         });
 
+      expect(async () => {
+        await transactionsController.initiateWithdrawal(withdrawalDto, {
+          user_id: 'US00009393993',
+          email: 'email@email.com',
+          email_verified: 1,
+        });
+      }).rejects.toThrowError(NotWalletOwnerException());
+    });
+
+    it('should be not be able to initiate withdrawal because wallet doesn"t exist', async () => {
+      jest
+        .spyOn(httpService, 'post')
+        .mockImplementation(() => of(resolveAccountResponse));
+
+      jest.spyOn(walletsService, 'findWallet').mockImplementation(() => {
+        return Promise.resolve(null);
+      });
+
+      jest
+        .spyOn(transactionsController, 'resolveAccount')
+        .mockImplementation(() => {
+          return Promise.resolve({ status: 'success' });
+        });
+
+      expect(async () => {
+        await transactionsController.initiateWithdrawal(withdrawalDto, {
+          user_id,
+          email: 'email@email.com',
+          email_verified: 1,
+        });
+      }).rejects.toThrowError(WalletNotFoundException());
+    });
+
+    it('should be not be able to initiate withdrawal because of insufficient balance', async () => {
+      jest.spyOn(httpService, 'post').mockClear();
+      jest
+        .spyOn(httpService, 'post')
+        .mockImplementation(() => of(resolveAccountResponse));
+
+      jest.spyOn(walletsService, 'findWallet').mockImplementation(() => {
+        return Promise.resolve(fakeWallet);
+      });
+
+      jest
+        .spyOn(transactionsController, 'resolveAccount')
+        .mockImplementation(() => {
+          return Promise.resolve({ status: 'success' });
+        });
+
+      withdrawalDto.amount = Number.POSITIVE_INFINITY;
+      expect(async () => {
+        await transactionsController.initiateWithdrawal(withdrawalDto, {
+          user_id,
+          email: 'email@email.com',
+          email_verified: 1,
+        });
+      }).rejects.toThrowError(InsufficientBalanceException());
+      withdrawalDto.amount = 3000;
+    });
+
+    it('should be able to initiate withdrawals', async () => {
       jest.spyOn(walletsService, 'findWallet').mockImplementation(() => {
         return Promise.resolve(fakeWallet);
       });
@@ -294,13 +397,22 @@ describe('TransactionsController', () => {
           return Promise.resolve(fakeWithdrawalTransaction);
         });
 
+      jest
+        .spyOn(httpService, 'post')
+        .mockImplementation(() => of(resolveAccountResponse));
+
+      jest
+        .spyOn(transactionsController, 'resolveAccount')
+        .mockImplementation(() => {
+          return Promise.resolve({ status: 'success' });
+        });
+
       expect(
-        await transactionsService.initiateWithdrawal(
-          fakeWallet.user_id,
-          fakeWallet.currency,
-          'ref',
-          3000,
-        ),
+        await transactionsController.initiateWithdrawal(withdrawalDto, {
+          user_id,
+          email: 'email@email.com',
+          email_verified: 1,
+        }),
       ).toBe(fakeWithdrawalTransaction);
     });
   });

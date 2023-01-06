@@ -35,7 +35,7 @@ export const WalletNotFoundException = () =>
   new NotFoundException('wallet not found');
 
 export const NotWalletOwnerException = () =>
-  new ForbiddenException('user is not the ownerof wallet');
+  new ForbiddenException('user is not the owner of wallet');
 
 export const InvalidAccountException = () =>
   new ForbiddenException('account is not valid');
