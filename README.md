@@ -36,7 +36,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About the Project
 Wallet service is a container-based NestJs Backend server wallet application 
-where users are able to create accounts, fund their wallets, manage their funds, handle transfers bettween wallet owners, withdraw their funds, retrieve transactions history, etc. 
+where users are able to create accounts, fund their wallets, handle transfers bettween wallet owners, withdraw their funds, retrieve transactions history, etc. 
 
 Very importantly, this application, features both local and stateless authetication using JSON Web Tokens which has been implemented using Passport library, and payment gateway integration for funds management and use of **database transactions** to ensure data integrity in critical multi-table queries and operations.
 
@@ -49,8 +49,7 @@ Very importantly, this application, features both local and stateless autheticat
 * Transfer between wallets
 * Withdrawals
 * Transactions history
-* Wallet details/ Balance
-* Multi-wallet/currency implementation
+* Retrieve wallet
 
 <!-- BUILT WITH -->
 ## 🔨 Built With
@@ -192,29 +191,10 @@ Response:
 
 ### 🏦 Wallets
 
-#### Retrieve my Wallets
-
-```http
-GET /wallets
-Authorization: Bearer Token <JWT>
-
-Response:
-  [
-    {
-    "wallet_id": "string",
-    "user_id": "string",
-    "balance": "number",
-    "currency": "ISO4217m currency code",
-    "created_at": "date string",
-    "updated_at": "date string"
-    }
-  ]
-```
-
 #### Retrieve Wallet
 
 ```http
-GET /wallets/:wallet_id
+GET /wallets/me
 Authorization: Bearer Token <JWT>
 
 Response:
@@ -231,29 +211,6 @@ Response:
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `wallet_id`      | `string` | **Required**. |
-
-
-#### Add wallet
-
-```http
-POST /wallets
-Content-Type: application/json
-Authorization: Bearer Token <JWT>
-
-Response:
-  {
-    "wallet_id": "string",
-    "user_id": "string",
-    "balance": "number",
-    "currency": "ISO4217 currency code",
-    "created_at": "date string",
-    "updated_at": "date string"
-  }
-```
-
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `currency`      | `ISO4217 currency code` | **Required**. |
 
 
 ### 🔄 Transactions
