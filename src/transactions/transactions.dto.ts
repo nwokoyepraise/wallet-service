@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsEnum,
   IsNotEmpty,
@@ -12,6 +13,7 @@ import { TransactionStatus, TransactionType } from './transactions.enum';
 export class FundWalletDto {
   @IsNotEmpty()
   @IsNumber()
+  @Transform(({value}) => value.toFixed(2))
   amount: number;
 
   @IsOptional()
@@ -27,6 +29,7 @@ export class TransferDto {
   @IsNotEmpty()
   @IsNumber()
   @Min(1)
+  @Transform(({value}) => value.toFixed(2))
   amount: number;
 
   @IsNotEmpty()
@@ -42,6 +45,7 @@ export class WithdrawalDto {
   @IsNotEmpty()
   @IsNumber()
   @Min(1)
+  @Transform(({value}) => value.toFixed(2))
   amount: number;
 
   @IsNotEmpty()
