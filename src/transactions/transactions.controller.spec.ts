@@ -50,7 +50,10 @@ describe('TransactionsController', () => {
   };
 
   let initiateFundingResponse = {
-    data: { data: { link: 'https://example.com/any-link' }, status: 'success' },
+    data: {
+      data: { link: 'https://example.com/any-link' },
+      status: 'success',
+    },
     headers: {},
     config: { url: 'https://example.com/fake-url' },
     status: 200,
@@ -87,7 +90,10 @@ describe('TransactionsController', () => {
   };
 
   let negativeInitiateFundingResponse = {
-    data: { data: { link: 'https://example.com/any-link' }, status: 'failed' },
+    data: {
+      data: { link: 'https://example.com/any-link' },
+      status: 'failed',
+    },
     headers: {},
     config: { url: 'https://example.com/fake-url' },
     status: 200,
@@ -97,7 +103,7 @@ describe('TransactionsController', () => {
   let fakeWallet: Wallet = {
     wallet_id: 'WA89JHHKDGE7',
     user_id: 'USDJIJE99HJJO',
-    balance: 250000,
+    balance: 250000.0,
     currency: Iso4217.NGN,
   };
 
@@ -137,7 +143,7 @@ describe('TransactionsController', () => {
     expect(transactionsController).toBeDefined();
   });
 
-  describe('fund-wallet', () => {
+  describe('fundWallet', () => {
     it('should fund not fund wallet because wallet doesn"t exist', async () => {
       jest
         .spyOn(transactionsService, 'initiateWalletFunding')
@@ -260,7 +266,7 @@ describe('TransactionsController', () => {
           },
         ),
       ).toEqual({
-        link: initiateFundingResponse.data.data.link,
+        payment_link: initiateFundingResponse.data.data.link,
         ...fakeTransaction,
       });
     });
@@ -483,7 +489,7 @@ describe('TransactionsController', () => {
             email_verified: 1,
           },
         );
-      }).rejects.toThrowError(TransactionNotFoundException())
+      }).rejects.toThrowError(TransactionNotFoundException());
     });
 
     it('should not find a transaction because transaction cannot be resolved successfully', async () => {
@@ -502,7 +508,7 @@ describe('TransactionsController', () => {
             email_verified: 1,
           },
         );
-      }).rejects.toThrowError(IllegalResourceAccessException())
+      }).rejects.toThrowError(IllegalResourceAccessException());
     });
 
     it('should find a transaction', async () => {
