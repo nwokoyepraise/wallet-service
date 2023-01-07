@@ -6,12 +6,13 @@
 2. [Services Available](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#-services-available)
 3. [Built with](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#-built-with)
 4. [Getting Started](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#-getting-started)
-5. [API Reference](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#api-reference)
-6. [Entity Relationship Diagram](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#entity-relation-diagram)
-7. [Roadmap](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#roadmap)
-8. [Contributing](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#contributing)
-9. [License](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#license)
-10. [Contact](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#contact)
+5. [Running Tests](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#running-tests)
+6. [API Reference](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#api-reference)
+7. [Entity Relationship Diagram](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#entity-relation-diagram)
+8. [Roadmap](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#roadmap)
+9. [Contributing](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#contributing)
+10. [License](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#license)
+11. [Contact](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#contact)
 <!-- <details open="open">
   <summary>Table of Contents</summary>
   <ol>
@@ -104,6 +105,21 @@ $ docker-compose up -d
 ```
 
 If the local system is running Linux, ```sudo``` privileges may be need to run the commands appropriately.
+
+## Running Tests
+
+To run unit tests, run the following command
+
+```bash
+  $ npm run test
+```
+
+To run coverage test, run the following command
+
+```bash
+  $ npm run test:cov
+```
+
 
 <!-- API REFERENCE -->
 ## API Reference
