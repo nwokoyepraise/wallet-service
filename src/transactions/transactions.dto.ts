@@ -1,5 +1,6 @@
 import { Transform } from 'class-transformer';
 import {
+  IsDecimal,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -12,7 +13,8 @@ import { TransactionStatus, TransactionType } from './transactions.enum';
 
 export class FundWalletDto {
   @IsNotEmpty()
-  @IsNumber()
+  @IsDecimal()
+  @Min(1.00)
   @Transform(({value}) => value.toFixed(2))
   amount: number;
 
@@ -27,8 +29,8 @@ export class FundWalletDto {
 
 export class TransferDto {
   @IsNotEmpty()
-  @IsNumber()
-  @Min(1)
+  @IsDecimal()
+  @Min(1.00)
   @Transform(({value}) => value.toFixed(2))
   amount: number;
 
@@ -43,8 +45,8 @@ export class TransferDto {
 
 export class WithdrawalDto {
   @IsNotEmpty()
-  @IsNumber()
-  @Min(1)
+  @IsDecimal()
+  @Min(1.00)
   @Transform(({value}) => value.toFixed(2))
   amount: number;
 
