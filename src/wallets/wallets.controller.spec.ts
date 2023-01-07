@@ -28,8 +28,6 @@ describe('WalletsController', () => {
           provide: WalletsService,
           useValue: {
             findWallet: jest.fn(),
-            findWallets: jest.fn(),
-            addWallet: jest.fn(),
           },
         },
       ],
@@ -49,7 +47,7 @@ describe('WalletsController', () => {
         return Promise.resolve(fakeWallet);
       });
       expect(
-        await walletsController.findWallet(fakeWallet.wallet_id, {
+        await walletsController.findWallet({
           user_id: fakeWallet.user_id,
           email: 'email@email.com',
           email_verified: 1,
@@ -62,59 +60,46 @@ describe('WalletsController', () => {
         return Promise.resolve(null);
       });
       expect(async () => {
-        await walletsController.findWallet(fakeWallet.wallet_id, {
+        await walletsController.findWallet({
           user_id: fakeWallet.user_id,
           email: 'email@email.com',
           email_verified: 1,
         });
       }).rejects.toThrowError(WalletNotFoundException());
     });
-
-    it('should not find a wallet bacause user is not owner of wallet', async () => {
-      jest.spyOn(walletsService, 'findWallet').mockImplementation(() => {
-        return Promise.resolve(fakeWallet);
-      });
-      expect(async () => {
-        await walletsController.findWallet(fakeWallet.wallet_id, {
-          user_id: 'US00000000000',
-          email: 'email@email.com',
-          email_verified: 1,
-        });
-      }).rejects.toThrowError(NotWalletOwnerException());
-    });
   });
 
-  describe('find-wallets', () => {
-    it('should find array wallet', async () => {
-      jest.spyOn(walletsService, 'findWallets').mockImplementation(() => {
-        return Promise.resolve([fakeWallet]);
-      });
-      expect(
-        await walletsController.findWallets({
-          user_id: fakeWallet.user_id,
-          email: 'email@email.com',
-          email_verified: 1,
-        }),
-      ).toEqual([fakeWallet]);
-    });
-  });
+  // describe('find-wallets', () => {
+  //   it('should find array wallet', async () => {
+  //     jest.spyOn(walletsService, 'findWallets').mockImplementation(() => {
+  //       return Promise.resolve([fakeWallet]);
+  //     });
+  //     expect(
+  //       await walletsController.findWallets({
+  //         user_id: fakeWallet.user_id,
+  //         email: 'email@email.com',
+  //         email_verified: 1,
+  //       }),
+  //     ).toEqual([fakeWallet]);
+  //   });
+  // });
 
-  it('should add a wallet', async () => {
-    const addWalletDto: AddWalletDto = {
-      currency: Iso4217.NGN,
-    };
+  // it('should add a wallet', async () => {
+  //   const addWalletDto: AddWalletDto = {
+  //     currency: Iso4217.NGN,
+  //   };
 
-    jest
-      .spyOn(walletsService, 'addWallet')
-      .mockImplementation((addWalletDto) => {
-        return Promise.resolve(fakeWallet);
-      });
-    expect(
-      await walletsController.addWallet(addWalletDto, {
-        user_id: fakeWallet.user_id,
-        email: 'email@email.com',
-        email_verified: 1,
-      }),
-    ).toEqual(fakeWallet);
-  });
+  //   jest
+  //     .spyOn(walletsService, 'addWallet')
+  //     .mockImplementation((addWalletDto) => {
+  //       return Promise.resolve(fakeWallet);
+  //     });
+  //   expect(
+  //     await walletsController.addWallet(addWalletDto, {
+  //       user_id: fakeWallet.user_id,
+  //       email: 'email@email.com',
+  //       email_verified: 1,
+  //     }),
+  //   ).toEqual(fakeWallet);
+  // });
 });

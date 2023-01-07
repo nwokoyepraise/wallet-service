@@ -14,35 +14,16 @@ import { WalletsService } from './wallets.service';
 export class WalletsController {
   constructor(private readonly walletsService: WalletsService) {}
 
-  @Get(':wallet_id')
+  @Get('me')
   async findWallet(
-    @Param('wallet_id') wallet_id: string,
     @User() { user_id }: UserPayload,
   ) {
-    let wallet = await this.walletsService.findWallet('wallet_id', wallet_id);
+    let wallet = await this.walletsService.findWallet('user_id', user_id);
 
     if (!wallet?.wallet_id) {
       throw WalletNotFoundException();
     }
-
-    if (wallet.user_id != user_id) {
-      throw NotWalletOwnerException();
-    }
+    
     return wallet;
-  }
-
-  @Get()
-  async findWallets(@User() { user_id }: UserPayload) {
-    let wallets = await this.walletsService.findWallets('user_id', user_id);
-
-    return wallets;
-  }
-
-  @Post()
-  async addWallet(
-    @Body() addWalletDto: AddWalletDto,
-    @User() { user_id }: UserPayload,
-  ) {
-    return await this.walletsService.addWallet(user_id, addWalletDto);
   }
 }
