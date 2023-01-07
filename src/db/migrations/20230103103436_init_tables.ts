@@ -40,7 +40,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('source').references('users.user_id');
     table.string('ref').notNullable();
     table.string('beneficiary').references('users.user_id').defaultTo(null);
-    table.integer('amount').notNullable();
+    table.decimal('amount', 15, 2).notNullable();
     table.enum('currency', Object.values(Iso4217)).defaultTo(Iso4217.NGN);
     table.enum('type', Object.values(TransactionType)).notNullable();
     table.enum('status', Object.values(TransactionStatus)).defaultTo(TransactionStatus.PENDING);
