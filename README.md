@@ -240,7 +240,6 @@ Response:
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `amount`      | `number` | **Required**. |
-| `source_wallet`      | `string` | **Required**. |
 | `beneficiary_wallet`      | `string` | **Required**. |
 
 #### Transfer funds
@@ -284,7 +283,6 @@ Response:
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `amount`      | `number` | **Required**. |
-| `source_wallet`      | `string` | **Required**. |
 | `bank_code`      | `string` | **Required**. |
 | `account_number`      | `string` | **Required**. |
 
