@@ -108,6 +108,8 @@ export class TransactionsController {
       throw WalletNotFoundException();
     }
 
+    fundWalletDto.amount = Number.parseFloat(fundWalletDto.amount.toFixed(2));
+
     let tx = await this.transactionsService.initiateWalletFunding(
       user_id,
       ref,
@@ -152,7 +154,7 @@ export class TransactionsController {
       throw UnableToCreatePaymentLinkException();
     }
 
-    return { link: data?.data.link, ...tx };
+    return { payment_link: data?.data.link, ...tx };
   }
 
   @Get(':transaction_id/fund-wallet/payment-callback')
@@ -209,6 +211,8 @@ export class TransactionsController {
   ) {
     let ref = KeyGen.gen(20, 'alphanumeric');
 
+    transferDto.amount = Number.parseFloat(transferDto.amount.toFixed(2));
+
     let successful = await this.transactionsService.transferFunds(
       user_id,
       ref,
@@ -248,6 +252,8 @@ export class TransactionsController {
     if (wallet.user_id != user_id) {
       throw NotWalletOwnerException();
     }
+
+    amount = Number.parseFloat(amount.toFixed(2));
 
     if (wallet.balance < amount) {
       throw InsufficientBalanceException();
