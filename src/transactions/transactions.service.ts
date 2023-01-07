@@ -80,19 +80,15 @@ export class TransactionsService {
   async transferFunds(
     user_id: string,
     ref: string,
-    { amount, beneficiary_wallet, source_wallet }: TransferDto,
+    { amount, beneficiary_wallet}: TransferDto,
   ) {
     await this.knex.transaction(async function (tx) {
       let sourceWallet: Wallet = (
-        await tx.select('*').from('wallets').where({ wallet_id: source_wallet })
+        await tx.select('*').from('wallets').where({ user_id })
       )[0];
 
       if (!sourceWallet?.wallet_id) {
         throw WalletNotFoundException();
-      }
-
-      if (sourceWallet.user_id !== user_id) {
-        throw NotWalletOwnerException();
       }
 
       let beneficiaryWallet: Wallet = (
@@ -115,7 +111,7 @@ export class TransactionsService {
       }
 
       await tx.table('wallets').increment('balance', -amount).where({
-        wallet_id: source_wallet,
+        user_id
       });
 
       await tx.table('wallets').increment('balance', +amount).where({

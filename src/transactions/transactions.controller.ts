@@ -231,7 +231,7 @@ export class TransactionsController {
   @UseGuards(JwtAuthGuard)
   @Post('withdraw')
   async initiateWithdrawal(
-    @Body() { account_number, amount, bank_code, source_wallet }: WithdrawalDto,
+    @Body() { account_number, amount, bank_code}: WithdrawalDto,
     @User() { user_id }: UserPayload,
   ) {
     let account = await this.resolveAccount(bank_code, account_number);
@@ -241,16 +241,12 @@ export class TransactionsController {
     }
 
     let wallet = await this.walletsService.findWallet(
-      'wallet_id',
-      source_wallet,
+      'user_id',
+      user_id
     );
 
     if (!wallet?.wallet_id) {
       throw WalletNotFoundException();
-    }
-
-    if (wallet.user_id != user_id) {
-      throw NotWalletOwnerException();
     }
 
     amount = Number.parseFloat(amount.toFixed(2));

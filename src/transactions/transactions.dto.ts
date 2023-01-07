@@ -34,10 +34,6 @@ export class TransferDto {
 
   @IsNotEmpty()
   @IsString()
-  source_wallet: string;
-
-  @IsNotEmpty()
-  @IsString()
   beneficiary_wallet: string;
 }
 
@@ -46,10 +42,6 @@ export class WithdrawalDto {
   @IsNumber()
   @Min(1.00)
   amount: number;
-
-  @IsNotEmpty()
-  @IsString()
-  source_wallet: string;
 
   @IsNotEmpty()
   @IsString()
