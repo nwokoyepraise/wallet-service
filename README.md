@@ -36,9 +36,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About the Project
 Wallet service is a container-based NestJs Backend server wallet application 
-where users are able to create accounts, fund their wallets, manage their funds, handle transfers bettween wallet owners, withdraw their funds, transactions history, etc. 
+where users are able to create accounts, fund their wallets, manage their funds, handle transfers bettween wallet owners, withdraw their funds, retrieve transactions history, etc. 
 
-Needless to say, this application, features both local and stateless authetication using JSON Web Tokens which has been implemented using Passport library, and payment gateway integration for funds management and use of database transactions to ensure data integrity in critical multi-table queries and operations.
+Very importantly, this application, features both local and stateless authetication using JSON Web Tokens which has been implemented using Passport library, and payment gateway integration for funds management and use of **database transactions** to ensure data integrity in critical multi-table queries and operations.
 
 <!--⛳ SERVICES AVAILABLE -->
 ## ⛳ Services Available
