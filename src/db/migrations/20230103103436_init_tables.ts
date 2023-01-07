@@ -21,7 +21,7 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('wallets', (table) => {
     table.string('wallet_id').primary();
     table.string('user_id').notNullable().references('users.user_id');
-    table.integer('balance').unsigned().defaultTo(0);
+    table.decimal('balance', 15, 2).unsigned().defaultTo(0);
     table.string('currency').defaultTo(Iso4217.NGN);
     table.timestamps(true, true, false);
   });
@@ -37,7 +37,7 @@ export async function up(knex: Knex): Promise<void> {
 
   await knex.schema.createTable('transactions', (table) => {
     table.string('transaction_id').primary();
-    table.string('source').references('users.user_id');
+    table.string('source').references('users.user_id').notNullable();
     table.string('ref').notNullable();
     table.string('beneficiary').references('users.user_id').defaultTo(null);
     table.decimal('amount', 15, 2).notNullable();
