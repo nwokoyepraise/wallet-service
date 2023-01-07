@@ -1,73 +1,314 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 🏦 Wallet Service
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Waller service is a container-based NestJs Backend server wallet application 
+where users are able to create accounts, fund their wallets, manage their funds, handle transfers bettween wallet owners, withdraw their funds, transactions history, etc. 
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Needless to say, this application, features both local and stateless authetication using JSON Web Tokens which has been implemented using Passport library, and payment gateway integration for funds management and use of database transactions to ensure data integrity in critical multi-table queries and operations.
 
-## Description
+## ⛳ Services Available
+* User registeration
+* Email verification
+* Login
+* Wallet funding
+* Transfer between wallets
+* Withdrawals
+* Transactions history
+* Wallet details/ Balance
+* Multi-wallet/currency implementation
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🔨 Built With
+* Node.js
+* NestJs (Typescript)
+* MySQL
+* KnexJs Query Builder
+* Docker
+* Passport.JS (Authentication)
 
-## Installation
+## 🏁 Getting Started
+
+## 🔩 Bare metal
+To build the project locall,, bare metal without docker, simply clone the github repository. Navigate to root project folder and run the following to install packages:
+
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+
+and add appropriate .env file in the project root folder
+#### Development
+After packages have been installed. Proceed to run:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
 $ npm run start:dev
+```
 
-# production mode
+#### Production
+After packages have been installed. Proceed to run:
+
+
+```bash
 $ npm run start:prod
 ```
 
-## Test
+## ⚓ Docker
+To run the application in a docker which, depending on the docker CLI tool available in your local system, navigate to the project root foler, add the appropriate
+.env file
+
+if docker-compose is available in your local system, please run the following commands in your terminal:
+
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+$ docker-compose build
 ```
 
-## Support
+```bash
+$ docker-compose up -d
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+If the local system is running Linux, ```sudo``` privileges may be need to run the commands appropriately.
+## API Reference
 
-## Stay in touch
+#### 📞 Server Ping
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```http
+GET /
 
-## License
+Response:
+  {
+    "message": "server active!"
+  }
+```
 
-Nest is [MIT licensed](LICENSE).
+### 🔑 Authentication
+#### User Registeration
+
+```http
+POST /users
+Content-Type: application/json
+
+Response:
+    {
+      "email": "string",
+      "user_id": "string"
+    }
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `email` | `string` | **Required**.  Must be a valid email string|
+| `password` | `string` | **Required**.|
+
+#### Verify Email
+
+```http
+PATCH /auth/verify-email
+Content-Type: application/json
+
+Response:
+  {
+    "message": "success"
+  }
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `email`      | `string` | **Required**. |
+| `user_id`      | `string` | **Required**. |
+| `token`      | `string` | **Required**. Token for verification|
+
+#### Login
+
+```http
+POST /auth/login
+Content-Type: application/json
+
+Response:
+  {
+    "user_id": "string",
+    "jwt": "string"
+  }
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `email`      | `string` | **Required**. |
+| `password`      | `string` | **Required**. |
+
+
+### 🏦 Wallets
+
+#### Retrieve my Wallets
+
+```http
+GET /wallets
+Authorization: Bearer Token <JWT>
+
+Response:
+  [
+    {
+    "wallet_id": "string",
+    "user_id": "string",
+    "balance": "number",
+    "currency": "ISO4217m currency code",
+    "created_at": "date string",
+    "updated_at": "date string"
+    }
+  ]
+```
+
+#### Retrieve Wallet
+
+```http
+GET /wallets/:wallet_id
+Authorization: Bearer Token <JWT>
+
+Response:
+  {
+    "wallet_id": "string",
+    "user_id": "string",
+    "balance": "number",
+    "currency": "ISO4217 currency code",
+    "created_at": "date string",
+    "updated_at": "date string"
+  }
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `wallet_id`      | `string` | **Required**. |
+
+
+#### Add wallet
+
+```http
+POST /wallets
+Content-Type: application/json
+Authorization: Bearer Token <JWT>
+
+Response:
+  {
+    "wallet_id": "string",
+    "user_id": "string",
+    "balance": "number",
+    "currency": "ISO4217 currency code",
+    "created_at": "date string",
+    "updated_at": "date string"
+  }
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `currency`      | `ISO4217 currency code` | **Required**. |
+
+
+### 🔁 Transactions
+
+#### Add funds
+
+This endpoints takes in the amount reuired for funding. It returns the transaction details which includes a **link** field which is the payment link which will be used to pay over any browser powered by Flutterwave.
+
+```http
+POST /transactions/fund-wallet
+Content-Type: application/json
+Authorization: Bearer Token <JWT>
+
+Response:
+  {
+    "link": "string (payment-link)",
+    "transaction_id": "string",
+    "ref": "string",
+    "source": "string",
+    "amount": "number",
+    "currency": "NGN",
+    "status": "PENDING",
+    "type": "FUNDING"
+  }
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `amount`      | `number` | **Required**. |
+| `source_wallet`      | `string` | **Required**. |
+| `beneficiary_wallet`      | `string` | **Required**. |
+
+#### Transfer funds
+
+```http
+POST /transactions/transfer
+Content-Type: application/json
+Authorization: Bearer Token <JWT>
+
+Response:
+  {
+    "message": "success"
+  }
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `amount`      | `number` | **Required**. |
+| `wallet`      | `string` | **Required**. |
+
+
+#### Withdraw funds
+
+```http
+POST /transactions/withdraw
+Content-Type: application/json
+Authorization: Bearer Token <JWT>
+
+Response:
+  {
+    "transaction_id": "string",
+    "ref": "string",
+    "source": "string",
+    "amount": "number",
+    "currency": "NGN",
+    "status": "PENDING",
+    "type": "WITHDRAWAL"
+  }
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `amount`      | `number` | **Required**. |
+| `source_wallet`      | `string` | **Required**. |
+| `bank_code`      | `string` | **Required**. |
+| `account_number`      | `string` | **Required**. |
+
+
+#### Retrieve own Transactions
+
+```http
+GET /transactions
+Authorization: Bearer Token <JWT>
+
+Response:
+  [{
+    "transaction_id": "string",
+    "ref": "string",
+    "source": "string",
+    "amount": "number",
+    "currency": "NGN",
+    "status": "PENDING",
+    "type": "WITHDRAWAL"
+  }]
+```
+
+#### Retrieve Transaction
+
+```http
+GET /transactions/:transaction_id
+Authorization: Bearer Token <JWT>
+
+Response:
+  {
+    "transaction_id": "string",
+    "ref": "string",
+    "source": "string",
+    "amount": "number",
+    "currency": "NGN",
+    "status": "PENDING",
+    "type": "WITHDRAWAL"
+  }
+```
