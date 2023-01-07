@@ -73,7 +73,8 @@ export class TransactionsService {
         this.select('*')
           .from('transactions')
           .where({ beneficiary: user_id })
-          .limit(10);
+          .orderBy('created_at', 'desc')
+          .limit(100);
       });
   }
 
