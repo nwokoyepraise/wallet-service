@@ -275,7 +275,6 @@ describe('TransactionsController', () => {
   describe('transfer-funds', () => {
     let transferDto: TransferDto = {
       amount: 3000,
-      source_wallet: 'WA000000000001',
       beneficiary_wallet: 'WA0000000000002',
     };
 
@@ -317,7 +316,6 @@ describe('TransactionsController', () => {
       account_number: '000000000000',
       bank_code: BankCode.ACCESS_BANK,
       amount: 3000,
-      source_wallet: wallet_id,
     };
 
     it('should be not be able to initiate withdrawal because of invalid account details', async () => {
@@ -332,31 +330,6 @@ describe('TransactionsController', () => {
           email_verified: 1,
         });
       }).rejects.toThrowError(InvalidAccountException());
-    });
-
-    it('should be not be able to initiate withdrawal because initiatiator is not wallet owner', async () => {
-      jest.spyOn(httpService, 'post').mockClear();
-      jest
-        .spyOn(httpService, 'post')
-        .mockImplementation(() => of(resolveAccountResponse));
-
-      jest.spyOn(walletsService, 'findWallet').mockImplementation(() => {
-        return Promise.resolve(fakeWallet);
-      });
-
-      jest
-        .spyOn(transactionsController, 'resolveAccount')
-        .mockImplementation(() => {
-          return Promise.resolve({ status: 'success' });
-        });
-
-      expect(async () => {
-        await transactionsController.initiateWithdrawal(withdrawalDto, {
-          user_id: 'US00009393993',
-          email: 'email@email.com',
-          email_verified: 1,
-        });
-      }).rejects.toThrowError(NotWalletOwnerException());
     });
 
     it('should be not be able to initiate withdrawal because wallet doesn"t exist', async () => {
