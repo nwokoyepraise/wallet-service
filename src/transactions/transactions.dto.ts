@@ -13,9 +13,8 @@ import { TransactionStatus, TransactionType } from './transactions.enum';
 
 export class FundWalletDto {
   @IsNotEmpty()
-  @IsDecimal()
+  @IsNumber()
   @Min(1.00)
-  @Transform(({value}) => value.toFixed(2))
   amount: number;
 
   @IsOptional()
@@ -29,9 +28,8 @@ export class FundWalletDto {
 
 export class TransferDto {
   @IsNotEmpty()
-  @IsDecimal()
+  @IsNumber()
   @Min(1.00)
-  @Transform(({value}) => value.toFixed(2))
   amount: number;
 
   @IsNotEmpty()
@@ -45,9 +43,8 @@ export class TransferDto {
 
 export class WithdrawalDto {
   @IsNotEmpty()
-  @IsDecimal()
+  @IsNumber()
   @Min(1.00)
-  @Transform(({value}) => value.toFixed(2))
   amount: number;
 
   @IsNotEmpty()
