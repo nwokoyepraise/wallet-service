@@ -1,10 +1,45 @@
 # 🏦 Wallet Service
 
-Waller service is a container-based NestJs Backend server wallet application 
+<!-- TABLE OF CONTENTS -->
+## Table of Contents
+1. [About The Project](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#about-the-project)
+2. [Services Available](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#-services-available)
+3. [Built with](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#-built-with)
+4. [Getting Started](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#-getting-started)
+5. [API Reference](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#api-reference)
+6. [Entity Relationship Diagram](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#entity-relation-diagram)
+7. [Roadmap](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#roadmap)
+8. [Contributing](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#contributing)
+9. [License](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#license)
+10. [Contact](https://github.com/nwokoyepraise/wallet-service/edit/main/README.md#contact)
+<!-- <details open="open">
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+    </li>
+    <li><a href="#services-available">Services Available</a></li>
+    <li><a href="#built-with">Built With</a></li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+    </li>
+    <li><a href="#api-reference">API Reference</a></li>
+    <li><a href="#entity-relationshi-diagram">Entity Relationship Diagram</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+</details> -->
+
+<!-- ABOUT THE PROJECT -->
+## About the Project
+Wallet service is a container-based NestJs Backend server wallet application 
 where users are able to create accounts, fund their wallets, manage their funds, handle transfers bettween wallet owners, withdraw their funds, transactions history, etc. 
 
 Needless to say, this application, features both local and stateless authetication using JSON Web Tokens which has been implemented using Passport library, and payment gateway integration for funds management and use of database transactions to ensure data integrity in critical multi-table queries and operations.
 
+<!--⛳ SERVICES AVAILABLE -->
 ## ⛳ Services Available
 * User registeration
 * Email verification
@@ -16,6 +51,7 @@ Needless to say, this application, features both local and stateless autheticati
 * Wallet details/ Balance
 * Multi-wallet/currency implementation
 
+<!-- BUILT WITH -->
 ## 🔨 Built With
 * Node.js
 * NestJs (Typescript)
@@ -24,6 +60,7 @@ Needless to say, this application, features both local and stateless autheticati
 * Docker
 * Passport.JS (Authentication)
 
+<!-- GETTING STARTED -->
 ## 🏁 Getting Started
 
 ## 🔩 Bare metal
@@ -67,6 +104,8 @@ $ docker-compose up -d
 ```
 
 If the local system is running Linux, ```sudo``` privileges may be need to run the commands appropriately.
+
+<!-- API REFERENCE -->
 ## API Reference
 
 #### 📞 Server Ping
@@ -201,7 +240,7 @@ Response:
 | `currency`      | `ISO4217 currency code` | **Required**. |
 
 
-### 🔁 Transactions
+### 🔄 Transactions
 
 #### Add funds
 
@@ -312,3 +351,40 @@ Response:
     "type": "WITHDRAWAL"
   }
 ```
+
+<!-- ENTITY RELATIONSHIP DIAGRAM -->
+## Entity Relation Diagram
+![wallet-service drawio](https://user-images.githubusercontent.com/65955286/211134091-4417dbae-693e-4129-80bc-884bb4fdd7c4.svg)
+
+
+<!-- ROADMAP -->
+## Roadmap
+
+See the [open issues](https://github.com/nwokoyepraise/wallet-service/issues) for a list of proposed features (and known issues).
+
+
+
+<!-- CONTRIBUTING -->
+## Contributing
+
+Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+
+
+<!-- LICENSE -->
+## License
+
+Distributed under the GNU-V3 License. See `LICENSE` for more information.
+
+
+
+<!-- CONTACT -->
+## Contact
+
+Project Link: [https://github.com/nwokoyepraise/wallet-service](https://github.com/nwokoyepraise/wallet-service)
